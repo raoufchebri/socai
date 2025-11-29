@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSurvey } from '@/hooks/useSurvey';
-import type { Question, Category, Answer } from '@/lib/survey-types';
+import { useLocalFirstSurvey } from '@/hooks/useLocalFirstSurvey';
+import type { Question, Answer } from '@/lib/survey-types';
 
 interface TerminalSurveyProps {
   year: number;
@@ -16,17 +16,17 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
     answers,
     isLoading,
     error,
-    isSaving,
+    isSubmitting,
     currentQuestions,
     totalQuestions,
     answeredCount,
     progressPercentage,
     saveAnswer,
-    completeSession,
+    submitAllAnswers,
     subscribeEmail,
     shouldShowQuestion,
     getAnswer,
-  } = useSurvey({ year });
+  } = useLocalFirstSurvey({ year });
 
   const [phase, setPhase] = useState<SurveyPhase>('intro');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -149,7 +149,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [phase, currentQuestion, selectedIndex, selectedMultiple]);
 
-  const submitAnswer = async () => {
+  const submitAnswer = () => {
     if (!currentQuestion) return;
 
     let answer: Answer;
@@ -176,7 +176,8 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
       return;
     }
 
-    await saveAnswer(currentQuestion.slug, answer);
+    // Save locally (instant, no network call)
+    saveAnswer(currentQuestion.slug, answer);
     goToNextQuestion();
   };
 
@@ -200,8 +201,12 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
   };
 
   const handleComplete = async () => {
-    await completeSession();
-    setPhase('complete');
+    try {
+      await submitAllAnswers();
+      setPhase('complete');
+    } catch {
+      // Error is handled in the hook
+    }
   };
 
   const handleEmailSubmit = async () => {
@@ -491,9 +496,20 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
         <div className="text-gray-400 text-sm mb-4">
           You answered {answeredCount} of {totalQuestions} questions
         </div>
-        <div className="terminal-line">
-          <span className="text-accent-green">Press ENTER to submit survey</span>
-        </div>
+        {isSubmitting ? (
+          <div className="terminal-line">
+            <span className="text-yellow-400 animate-pulse">⏳ Submitting your answers...</span>
+          </div>
+        ) : (
+          <div className="terminal-line">
+            <span className="text-accent-green">Press ENTER to submit survey</span>
+          </div>
+        )}
+        {error && (
+          <div className="terminal-line mt-2">
+            <span className="text-red-400">✗ {error}</span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -565,7 +581,12 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
           {phase === 'questions' && (
             <span className="text-accent-cyan text-xs font-mono">
               {progressPercentage}% complete
-              {isSaving && <span className="ml-2 text-yellow-400">saving...</span>}
+              <span className="ml-2 text-green-400">● local</span>
+            </span>
+          )}
+          {phase === 'recap' && isSubmitting && (
+            <span className="text-yellow-400 text-xs font-mono animate-pulse">
+              submitting...
             </span>
           )}
         </div>
