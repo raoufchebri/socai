@@ -233,7 +233,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
           <div className="terminal-status"></div>
         </div>
         <div className="terminal-body flex items-center justify-center">
-          <div className="text-accent-cyan font-mono animate-pulse">
+          <div className="text-[#CD8B6A] font-mono animate-pulse">
             Loading survey...
           </div>
         </div>
@@ -312,7 +312,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
       {/* ASCII Art Logo */}
       <div className="overflow-x-auto mb-8">
         <pre 
-          className="font-mono text-[0.6rem] sm:text-[0.8rem] md:text-[0.95rem] lg:text-base leading-none whitespace-pre text-accent-cyan select-none drop-shadow-[0_0_10px_rgba(0,217,255,0.5)]"
+          className="font-mono text-[0.6rem] sm:text-[0.8rem] md:text-[0.95rem] lg:text-base leading-none whitespace-pre text-[#CD8B6A] select-none drop-shadow-[0_0_10px_rgba(205,139,106,0.5)]"
           style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, monospace', lineHeight: 1 }}
           aria-label="State of Code"
         >
@@ -321,7 +321,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
       </div>
 
       <div className="terminal-line terminal-prompt">
-        <span className="text-accent-green">~</span> Welcome to {surveyData.survey.title}
+        <span className="text-[#CD8B6A]">~</span> Welcome to {surveyData.survey.title}
       </div>
       <div className="terminal-line mt-4 text-gray-400">
         {surveyData.survey.description || 'This survey explores how developers use AI coding agents.'}
@@ -330,17 +330,17 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
         Your responses will help shape the future of developer tools.
       </div>
       <div className="terminal-line mt-6 text-gray-500">
-        <span className="text-accent-cyan">ℹ</span> Estimated time: 5-10 minutes
+        <span className="text-[#CD8B6A]">ℹ</span> Estimated time: 5-10 minutes
       </div>
       <div className="terminal-line text-gray-500">
-        <span className="text-accent-cyan">ℹ</span> {totalQuestions} questions across {surveyData.categories.length} categories
+        <span className="text-[#CD8B6A]">ℹ</span> {totalQuestions} questions across {surveyData.categories.length} categories
       </div>
       <div className="terminal-line text-gray-500">
-        <span className="text-accent-cyan">ℹ</span> All questions can be skipped
+        <span className="text-[#CD8B6A]">ℹ</span> All questions can be skipped
       </div>
       <div className="terminal-line mt-8">
         <span className="terminal-cursor"></span>
-        <span className="text-accent-green ml-2">Press ENTER to begin</span>
+        <span className="text-[#CD8B6A] ml-2">Press ENTER to begin</span>
       </div>
     </div>
   );
@@ -352,7 +352,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
       <div className="terminal-content">
         {/* Question prompt */}
         <div className="terminal-line terminal-prompt mb-2">
-          <span className="text-accent-purple">?</span> {question.prompt}
+          <span className="text-[#CD8B6A]">?</span> {question.prompt}
         </div>
 
         {question.description && (
@@ -374,7 +374,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
                   submitAnswer();
                 }
               }}
-              className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-gray-200 font-mono focus:outline-none focus:border-accent-cyan"
+              className="w-full bg-[#21262d] border border-[#30363d] rounded px-4 py-3 text-gray-200 font-mono focus:outline-none focus:border-[#CD8B6A]"
               placeholder="Type your answer..."
               autoFocus
             />
@@ -472,7 +472,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
   const renderRecap = () => (
     <div className="terminal-content">
       <div className="terminal-line terminal-prompt mb-4">
-        <span className="text-accent-cyan">📋</span> Review Your Answers
+        <span className="text-[#CD8B6A]">📋</span> Review Your Answers
       </div>
 
       <div className="space-y-6 max-h-96 overflow-y-auto pr-2">
@@ -482,7 +482,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
 
           return (
             <div key={category.id}>
-              <div className="text-accent-purple font-mono text-sm mb-2">
+              <div className="text-[#CD8B6A] font-mono text-sm mb-2">
                 {category.name}
               </div>
               <div className="space-y-2 pl-4 border-l border-gray-700">
@@ -502,7 +502,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
                       <div className="flex-1 min-w-0">
                         <div className="text-gray-300 truncate">{q.prompt}</div>
                         {answer !== undefined && (
-                          <div className="text-accent-cyan text-xs mt-1">
+                          <div className="text-[#CD8B6A] text-xs mt-1">
                             {Array.isArray(answer) ? answer.join(', ') : String(answer)}
                           </div>
                         )}
@@ -527,7 +527,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
           </div>
         ) : (
           <div className="terminal-line">
-            <span className="text-accent-green">Press ENTER to submit survey</span>
+            <span className="text-[#CD8B6A]">Press ENTER to submit survey</span>
           </div>
         )}
         {error && (
@@ -542,7 +542,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
   const renderComplete = () => (
     <div className="terminal-content">
       <div className="terminal-line terminal-prompt">
-        <span className="text-accent-green">✓</span> Survey Complete!
+        <span className="text-[#7ee787]">✓</span> Survey Complete!
       </div>
       <div className="terminal-line mt-4 text-gray-400">
         Thank you for participating in the {surveyData.survey.title}.
@@ -567,19 +567,19 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
                   handleEmailSubmit();
                 }
               }}
-              className="flex-1 bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-2 text-gray-200 font-mono text-sm focus:outline-none focus:border-accent-cyan"
+              className="flex-1 bg-[#21262d] border border-[#30363d] rounded px-4 py-2 text-gray-200 font-mono text-sm focus:outline-none focus:border-[#CD8B6A]"
               placeholder="your@email.com"
             />
             <button
               onClick={handleEmailSubmit}
-              className="px-4 py-2 bg-accent-cyan/20 border border-accent-cyan/40 rounded-lg text-accent-cyan font-mono text-sm hover:bg-accent-cyan/30 transition-colors"
+              className="px-4 py-2 bg-[#CD8B6A]/20 border border-[#CD8B6A]/40 rounded text-[#CD8B6A] font-mono text-sm hover:bg-[#CD8B6A]/30 transition-colors"
             >
               Notify me
             </button>
           </div>
         </div>
       ) : (
-        <div className="mt-8 text-accent-green">
+        <div className="mt-8 text-[#7ee787]">
           <span>✓</span> You&apos;ll be notified when results are ready!
         </div>
       )}
@@ -604,9 +604,8 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
         </div>
         <div className="terminal-status">
           {phase === 'questions' && (
-            <span className="text-accent-cyan text-xs font-mono">
-              {progressPercentage}% complete
-              <span className="ml-2 text-green-400">● local</span>
+            <span className="text-[#CD8B6A] text-xs font-mono">
+              {progressPercentage}%
             </span>
           )}
           {phase === 'recap' && isSubmitting && (
@@ -621,7 +620,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
       {phase === 'questions' && currentCategory && (
         <div className="terminal-section-bar">
           <div className="terminal-section-info">
-            <span className="text-accent-purple font-semibold">{currentCategory.name}</span>
+            <span className="text-[#CD8B6A] font-semibold">{currentCategory.name}</span>
             {currentCategory.description && (
               <>
                 <span className="text-gray-500 mx-2">·</span>
