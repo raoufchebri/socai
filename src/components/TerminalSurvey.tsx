@@ -293,8 +293,33 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
     );
   }
 
+  const asciiLogo = `
+███████╗ ████████╗  █████╗  ████████╗ ███████╗
+██╔════╝ ╚══██╔══╝ ██╔══██╗ ╚══██╔══╝ ██╔════╝
+███████╗    ██║    ███████║    ██║    █████╗  
+╚════██║    ██║    ██╔══██║    ██║    ██╔══╝  
+███████║    ██║    ██║  ██║    ██║    ███████╗
+╚══════╝    ╚═╝    ╚═╝  ╚═╝    ╚═╝    ╚══════╝
+ ██████╗  ███████╗      ██████╗  ██████╗  ██████╗  ███████╗
+██╔═══██╗ ██╔════╝     ██╔════╝ ██╔═══██╗ ██╔══██╗ ██╔════╝
+██║   ██║ █████╗       ██║      ██║   ██║ ██║  ██║ █████╗  
+██║   ██║ ██╔══╝       ██║      ██║   ██║ ██║  ██║ ██╔══╝  
+╚██████╔╝ ██║          ╚██████╗ ╚██████╔╝ ██████╔╝ ███████╗
+ ╚═════╝  ╚═╝           ╚═════╝  ╚═════╝  ╚═════╝  ╚══════╝`.trim();
+
   const renderIntro = () => (
     <div className="terminal-content">
+      {/* ASCII Art Logo */}
+      <div className="overflow-x-auto mb-8">
+        <pre 
+          className="font-mono text-[0.6rem] sm:text-[0.8rem] md:text-[0.95rem] lg:text-base leading-none whitespace-pre text-accent-cyan select-none drop-shadow-[0_0_10px_rgba(0,217,255,0.5)]"
+          style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, monospace', lineHeight: 1 }}
+          aria-label="State of Code"
+        >
+          {asciiLogo}
+        </pre>
+      </div>
+
       <div className="terminal-line terminal-prompt">
         <span className="text-accent-green">~</span> Welcome to {surveyData.survey.title}
       </div>
@@ -575,7 +600,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
           <span className="terminal-btn terminal-btn-green"></span>
         </div>
         <div className="terminal-title">
-          stateofcode-{year}.sh
+          stateofcode.ai/2025
         </div>
         <div className="terminal-status">
           {phase === 'questions' && (
