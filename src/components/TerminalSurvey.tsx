@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useLocalFirstSurvey } from '@/hooks/useLocalFirstSurvey';
 import type { Question, Answer } from '@/lib/survey-types';
 
@@ -13,7 +13,6 @@ type SurveyPhase = 'intro' | 'questions' | 'recap' | 'complete';
 export default function TerminalSurvey({ year }: TerminalSurveyProps) {
   const {
     surveyData,
-    answers,
     isLoading,
     error,
     isSubmitting,
@@ -71,7 +70,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
         isComplete: questions.length > 0 && answeredQuestions.length === questions.length,
       };
     }).filter(cat => cat.questions.length > 0);
-  }, [surveyData, shouldShowQuestion, getAnswer, answers]);
+  }, [surveyData, shouldShowQuestion, getAnswer]);
 
   // Get current category and question
   const currentCategory = categoriesWithQuestions[currentCategoryIndex];
@@ -108,7 +107,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
       }
     });
     
-    return { groups: groups.filter(g => g.questions.length > 0), overallQuestions: [] as Question[] };
+    return { groups: groups.filter(g => g.questions.length > 0) };
   }, [isAIToolsCategory, currentCategory]);
 
   // State for matrix view - track answers for all tools
@@ -218,7 +217,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
 
       // Matrix navigation for AI Tools category
       if (isAIToolsCategory && aiToolsGroups && 'groups' in aiToolsGroups) {
-        const { groups, overallQuestions } = aiToolsGroups;
+        const { groups } = aiToolsGroups;
         const currentGroup = groups[matrixGroupIndex];
         const optionValues = ['never-heard', 'heard', 'used'];
         
@@ -243,11 +242,6 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
               setMatrixGroupIndex(groups.length - 1);
               const lastGroup = groups[groups.length - 1];
               setMatrixRowIndex(lastGroup.questions.length - 1);
-            }
-          } else if (e.key === 'ArrowDown' || e.key === 'j') {
-            e.preventDefault();
-            if (overallQuestionIndex < overallQuestions.length - 1) {
-              setOverallQuestionIndex(prev => prev + 1);
             }
           } else if (e.key === 'Enter') {
             e.preventDefault();
@@ -278,10 +272,6 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
             // Move to next group's first row
             setMatrixGroupIndex(prev => prev + 1);
             setMatrixRowIndex(0);
-          } else if (overallQuestions.length > 0) {
-            // Move to overall section
-            setIsInOverallSection(true);
-            setOverallQuestionIndex(0);
           }
           return;
         }
@@ -362,9 +352,6 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
           if (matrixGroupIndex < groups.length - 1) {
             setMatrixGroupIndex(prev => prev + 1);
             setMatrixRowIndex(0);
-          } else if (overallQuestions.length > 0) {
-            setIsInOverallSection(true);
-            setOverallQuestionIndex(0);
           } else {
             handleMatrixComplete();
           }
@@ -469,6 +456,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Intentionally minimal deps for keyboard handler stability
   }, [phase, currentQuestion, selectedIndex, selectedMultiple]);
 
   const submitAnswer = () => {
@@ -893,7 +881,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
   const renderAIToolsMatrix = () => {
     if (!aiToolsGroups || !('groups' in aiToolsGroups)) return null;
     
-    const { groups, overallQuestions } = aiToolsGroups;
+    const { groups } = aiToolsGroups;
     const optionLabels = ['Never', 'Heard', 'Used'];
     const optionValues = ['never-heard', 'heard', 'used'];
 
@@ -1085,7 +1073,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
                 {category.name}
               </div>
               <div className="space-y-2 pl-4 border-l border-gray-700">
-                {categoryQuestions.map((q, idx) => {
+                {categoryQuestions.map((q) => {
                   const answer = getAnswer(q.slug);
                   const questionIndex = currentQuestions.findIndex(cq => cq.slug === q.slug);
                   

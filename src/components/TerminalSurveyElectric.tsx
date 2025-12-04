@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useElectricSurvey } from '@/hooks/useElectricSurvey';
 import type { Question } from '@/lib/survey-types';
 
@@ -16,7 +16,6 @@ export default function TerminalSurveyElectric({ year }: TerminalSurveyElectricP
     survey,
     categories,
     questions,
-    answers,
     isLoading,
     error,
     isSyncing,
@@ -151,6 +150,7 @@ export default function TerminalSurveyElectric({ year }: TerminalSurveyElectricP
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Intentionally minimal deps for keyboard handler stability
   }, [phase, currentQuestion, selectedIndex, selectedMultiple]);
 
   const submitAnswer = () => {

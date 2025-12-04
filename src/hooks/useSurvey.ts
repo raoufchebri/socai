@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import type { SurveyData, SessionResponse, Question, Answer, SkipCondition } from '@/lib/survey-types';
+import type { SurveyData, SessionResponse, Question, Answer } from '@/lib/survey-types';
 
 const SESSION_TOKEN_KEY = 'stateofcode_session_token';
 

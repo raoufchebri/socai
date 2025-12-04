@@ -36,7 +36,7 @@ export default function SponsorsSection() {
 
           {/* Sponsors grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {sponsorsData.map((sponsor, idx) => (
+            {sponsorsData.map((sponsor) => (
               <a
                 key={sponsor.id}
                 href={sponsor.url}

@@ -4,6 +4,14 @@ const ELECTRIC_URL = 'https://api.electric-sql.cloud';
 const SOURCE_ID = process.env.ELECTRIC_SOURCE_ID!;
 const SOURCE_SECRET = process.env.ELECTRIC_SOURCE_SECRET!;
 
+// Allowed origins for CORS - add your production domain here
+const ALLOWED_ORIGINS = [
+  'http://localhost:3000',
+  'https://stateofcode.ai',
+  'https://www.stateofcode.ai',
+  process.env.NEXT_PUBLIC_APP_URL,
+].filter(Boolean) as string[];
+
 // Allowed tables for syncing
 const ALLOWED_TABLES = ['surveys', 'categories', 'questions', 'survey_questions', 'sessions', 'responses'];
 
@@ -81,8 +89,11 @@ export async function GET(
       }
     }
 
-    // Enable CORS for client-side requests
-    headers.set('Access-Control-Allow-Origin', '*');
+    // Enable CORS for client-side requests (restricted to allowed origins)
+    const origin = request.headers.get('origin');
+    if (origin && ALLOWED_ORIGINS.includes(origin)) {
+      headers.set('Access-Control-Allow-Origin', origin);
+    }
     headers.set('Access-Control-Expose-Headers', electricHeaders.join(', '));
 
     const body = await response.text();
@@ -101,14 +112,20 @@ export async function GET(
 }
 
 // Handle preflight requests
-export async function OPTIONS() {
+export async function OPTIONS(request: NextRequest) {
+  const origin = request.headers.get('origin');
+  const headers: Record<string, string> = {
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  };
+  
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    headers['Access-Control-Allow-Origin'] = origin;
+  }
+  
   return new Response(null, {
     status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
+    headers,
   });
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useLocalFirstSurvey } from '@/hooks/useLocalFirstSurvey';
 import type { Question } from '@/lib/survey-types';
 
@@ -14,7 +14,6 @@ type Answer = string | string[] | number;
 export default function TerminalSurveyLocalFirst({ year }: TerminalSurveyLocalFirstProps) {
   const {
     surveyData,
-    answers,
     isLoading,
     error,
     isSubmitting,
@@ -149,6 +148,7 @@ export default function TerminalSurveyLocalFirst({ year }: TerminalSurveyLocalFi
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Intentionally minimal deps for keyboard handler stability
   }, [phase, currentQuestion, selectedIndex, selectedMultiple]);
 
   const submitAnswer = () => {

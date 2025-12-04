@@ -1,9 +1,9 @@
 import { config } from 'dotenv';
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
-import { eq, inArray } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import * as schema from './schema';
-import { categories, questions, surveyQuestions, responses, surveys } from './schema';
+import { categories, questions, surveys } from './schema';
 
 // Load environment variables from .env.local
 config({ path: '.env.local' });
