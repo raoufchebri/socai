@@ -12,7 +12,11 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "npx tsx src/db/seed.ts",
-    "db:migrate-about-you": "npx tsx src/db/migrate-about-you.ts"
+    "db:migrate-about-you": "npx tsx src/db/migrate-about-you.ts",
+    "db:migrate-ai-tools": "npx tsx src/db/migrate-ai-tools.ts",
+    "db:migrate-ai-sections": "npx tsx src/db/migrate-ai-sections.ts",
+    "db:consolidate-ai-tools": "npx tsx src/db/migrate-consolidate-ai-tools.ts",
+    "db:add-ai-models": "npx tsx src/db/migrate-ai-models.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",

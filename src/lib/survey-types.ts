@@ -70,3 +70,4 @@ export interface SessionResponse {
 
 export type Answer = string | string[] | number;
 
+
