@@ -33,6 +33,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedMultiple, setSelectedMultiple] = useState<Set<string>>(new Set());
   const [textInput, setTextInput] = useState('');
+  const [otherText, setOtherText] = useState('');
   const [email, setEmail] = useState('');
   const [emailSubmitted, setEmailSubmitted] = useState(false);
 
@@ -154,20 +155,35 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
       setSelectedIndex(0);
       setSelectedMultiple(new Set());
       setTextInput('');
+      setOtherText('');
       
       // Pre-populate from existing answer
       const existingAnswer = getAnswer(currentQuestion.slug);
       if (existingAnswer !== undefined) {
         if (currentQuestion.type === 'multiple' && Array.isArray(existingAnswer)) {
-          setSelectedMultiple(new Set(existingAnswer as string[]));
+          const answers = existingAnswer as string[];
+          const otherAnswer = answers.find(a => a.startsWith('other:'));
+          if (otherAnswer) {
+            setOtherText(otherAnswer.replace('other:', ''));
+            setSelectedMultiple(new Set(answers.map(a => a.startsWith('other:') ? 'other' : a)));
+          } else {
+            setSelectedMultiple(new Set(answers));
+          }
         } else if (currentQuestion.type === 'text' && typeof existingAnswer === 'string') {
           setTextInput(existingAnswer);
         } else if (currentQuestion.type === 'scale' && typeof existingAnswer === 'number') {
           const min = currentQuestion.scaleMin ?? 1;
           setSelectedIndex(existingAnswer - min);
         } else if (currentQuestion.type === 'single' && currentQuestion.options) {
-          const idx = currentQuestion.options.findIndex(o => o.value === existingAnswer);
-          if (idx >= 0) setSelectedIndex(idx);
+          const answerStr = existingAnswer as string;
+          if (answerStr.startsWith('other:')) {
+            setOtherText(answerStr.replace('other:', ''));
+            const idx = currentQuestion.options.findIndex(o => o.value.includes('other'));
+            if (idx >= 0) setSelectedIndex(idx);
+          } else {
+            const idx = currentQuestion.options.findIndex(o => o.value === answerStr);
+            if (idx >= 0) setSelectedIndex(idx);
+          }
         }
       }
     }
@@ -459,6 +475,11 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- Intentionally minimal deps for keyboard handler stability
   }, [phase, currentQuestion, selectedIndex, selectedMultiple]);
 
+  // Helper to check if an option is an "other" option
+  const isOtherOption = (value: string) => {
+    return value === 'other' || value.startsWith('other-');
+  };
+
   const submitAnswer = () => {
     if (!currentQuestion) return;
 
@@ -467,13 +488,26 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
     if (currentQuestion.type === 'single') {
       const options = currentQuestion.options || [];
       if (!options[selectedIndex]) return;
-      answer = options[selectedIndex].value;
+      const selectedValue = options[selectedIndex].value;
+      // If "other" is selected and there's text, include it
+      if (isOtherOption(selectedValue) && otherText.trim()) {
+        answer = `other:${otherText.trim()}`;
+      } else {
+        answer = selectedValue;
+      }
     } else if (currentQuestion.type === 'multiple') {
       if (selectedMultiple.size === 0) {
         goToNextQuestion();
         return;
       }
-      answer = Array.from(selectedMultiple);
+      // Replace "other" with "other:text" if there's text
+      const answers = Array.from(selectedMultiple).map(val => {
+        if (isOtherOption(val) && otherText.trim()) {
+          return `other:${otherText.trim()}`;
+        }
+        return val;
+      });
+      answer = answers;
     } else if (currentQuestion.type === 'scale') {
       answer = (currentQuestion.scaleMin ?? 1) + selectedIndex;
     } else if (currentQuestion.type === 'text') {
@@ -773,35 +807,56 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
                 ? selectedMultiple.has(option.value)
                 : isHighlighted;
               const shortcutKey = getShortcutKey(idx);
+              const isOther = isOtherOption(option.value);
 
               return (
-                <div
-                  key={option.id}
-                  className={`terminal-option ${isHighlighted ? 'terminal-option-selected' : ''}`}
-                  onClick={() => {
-                    setSelectedIndex(idx);
-                    if (question.type === 'multiple') {
-                      setSelectedMultiple(prev => {
-                        const newSet = new Set(prev);
-                        if (newSet.has(option.value)) {
-                          newSet.delete(option.value);
-                        } else {
-                          newSet.add(option.value);
-                        }
-                        return newSet;
-                      });
-                    }
-                  }}
-                >
-                  <span className="terminal-option-number text-gray-500 w-5 text-right mr-2 font-mono text-sm">
-                    {shortcutKey ?? ''}
-                  </span>
-                  <span className="terminal-option-indicator">
-                    {question.type === 'multiple'
-                      ? (isChecked ? '◉' : '○')
-                      : (isHighlighted ? '›' : ' ')}
-                  </span>
-                  <span className="terminal-option-label">{option.label}</span>
+                <div key={option.id}>
+                  <div
+                    className={`terminal-option ${isHighlighted ? 'terminal-option-selected' : ''}`}
+                    onClick={() => {
+                      setSelectedIndex(idx);
+                      if (question.type === 'multiple') {
+                        setSelectedMultiple(prev => {
+                          const newSet = new Set(prev);
+                          if (newSet.has(option.value)) {
+                            newSet.delete(option.value);
+                          } else {
+                            newSet.add(option.value);
+                          }
+                          return newSet;
+                        });
+                      }
+                    }}
+                  >
+                    <span className="terminal-option-number text-gray-500 w-5 text-right mr-2 font-mono text-sm">
+                      {shortcutKey ?? ''}
+                    </span>
+                    <span className="terminal-option-indicator">
+                      {question.type === 'multiple'
+                        ? (isChecked ? '◉' : '○')
+                        : (isHighlighted ? '›' : ' ')}
+                    </span>
+                    <span className="terminal-option-label">{option.label}</span>
+                  </div>
+                  {/* Show text input for "Other" option when selected */}
+                  {isOther && ((question.type === 'single' && isHighlighted) || (question.type === 'multiple' && isChecked)) && (
+                    <div className="ml-10 mt-2 mb-2">
+                      <input
+                        type="text"
+                        value={otherText}
+                        onChange={(e) => setOtherText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            submitAnswer();
+                          }
+                        }}
+                        className="w-full max-w-md bg-[#21262d] border border-[#30363d] rounded px-3 py-2 text-gray-200 font-mono text-sm focus:outline-none focus:border-[#CD8B6A]"
+                        placeholder="Please specify..."
+                        autoFocus
+                      />
+                    </div>
+                  )}
                 </div>
               );
             })}

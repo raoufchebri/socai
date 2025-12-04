@@ -41,11 +41,9 @@ async function resetSurvey() {
   console.log('Creating categories...');
   const categoryData = [
     { slug: 'about-you', name: 'About You', description: 'Age, experience, location, and background', order: 1 },
-    { slug: 'vibe-engineering', name: 'Vibe Engineering', description: 'How you use AI coding tools', order: 2 },
-    { slug: 'languages-tools', name: 'Languages & Tools', description: 'Programming languages and AI tools', order: 3 },
-    { slug: 'models', name: 'Models', description: 'AI models you use', order: 4 },
-    { slug: 'mcp', name: 'MCP', description: 'Model Context Protocol integrations', order: 5 },
-    { slug: 'open-ended', name: 'Open-Ended', description: 'Final thoughts', order: 6 },
+    { slug: 'languages-tools', name: 'Languages & Tools', description: 'Programming languages, AI tools, models, and MCP', order: 2 },
+    { slug: 'vibe-engineering', name: 'Vibe Engineering', description: 'How you use AI coding tools', order: 3 },
+    { slug: 'final-thoughts', name: 'Final Thoughts', description: 'Any additional feedback', order: 4 },
   ];
 
   const createdCategories: Record<string, number> = {};
@@ -58,7 +56,7 @@ async function resetSurvey() {
 
   // 4. Define all 33 questions exactly as in survey.md
   const allQuestions = [
-    // === ABOUT YOU (7 questions) ===
+    // === ABOUT YOU (7 questions: #1-7) ===
     {
       slug: 'age',
       prompt: 'How old are you?',
@@ -177,205 +175,7 @@ async function resetSurvey() {
       ],
     },
 
-    // === VIBE ENGINEERING (12 questions) ===
-    {
-      slug: 'ai-tools-frequency',
-      prompt: 'How often do you use AI coding tools?',
-      type: 'single' as const,
-      categorySlug: 'vibe-engineering',
-      order: 1,
-      options: [
-        { id: 'daily', label: 'Yes, daily', value: 'daily' },
-        { id: 'weekly', label: 'Yes, multiple times per week', value: 'weekly' },
-        { id: 'occasionally', label: 'Occasionally', value: 'occasionally' },
-        { id: 'tried-stopped', label: "I've tried them but don't use them anymore", value: 'tried-stopped' },
-        { id: 'not-yet', label: 'No, not yet', value: 'not-yet' },
-        { id: 'not-interested', label: "No, and I'm not interested", value: 'not-interested' },
-      ],
-    },
-    {
-      slug: 'review-time',
-      prompt: 'How much time do you spend reviewing AI-generated code?',
-      type: 'single' as const,
-      categorySlug: 'vibe-engineering',
-      order: 2,
-      options: [
-        { id: 'none', label: "I don't, I fully trust the generated code", value: 'none' },
-        { id: 'less-1min', label: 'Less than 1 minute per response', value: 'less-1min' },
-        { id: '1-3min', label: '1–3 minutes per response', value: '1-3min' },
-        { id: '3-5min', label: '3–5 minutes per response', value: '3-5min' },
-        { id: 'more-5min', label: 'More than 5 minutes per response', value: 'more-5min' },
-        { id: 'not-sure', label: 'Not sure', value: 'not-sure' },
-      ],
-    },
-    {
-      slug: 'primary-reason',
-      prompt: 'What is your primary reason for using AI coding tools or agents?',
-      type: 'single' as const,
-      categorySlug: 'vibe-engineering',
-      order: 3,
-      options: [
-        { id: 'faster', label: 'To code faster', value: 'faster' },
-        { id: 'reduce-repetitive', label: 'To reduce repetitive tasks', value: 'reduce-repetitive' },
-        { id: 'improve-quality', label: 'To improve code quality', value: 'improve-quality' },
-        { id: 'explore', label: 'To explore unfamiliar languages or frameworks', value: 'explore' },
-        { id: 'understand', label: 'To better understand existing code', value: 'understand' },
-        { id: 'generate-tests', label: 'To generate tests or documentation automatically', value: 'generate-tests' },
-        { id: 'prototype', label: 'To prototype ideas quickly', value: 'prototype' },
-        { id: 'learn', label: 'To learn or improve my skills', value: 'learn' },
-        { id: 'other', label: 'Other (please specify)', value: 'other' },
-      ],
-    },
-    {
-      slug: 'biggest-challenge',
-      prompt: 'What is the biggest challenge you face when using AI coding tools?',
-      type: 'single' as const,
-      categorySlug: 'vibe-engineering',
-      order: 4,
-      options: [
-        { id: 'hallucinations', label: 'Inaccurate or hallucinated code', value: 'hallucinations' },
-        { id: 'limited-understanding', label: 'Limited understanding of my codebase', value: 'limited-understanding' },
-        { id: 'hard-debug', label: 'Hard to debug AI-generated code', value: 'hard-debug' },
-        { id: 'security', label: 'Security or privacy concerns', value: 'security' },
-        { id: 'corporate', label: 'Corporate restrictions / compliance', value: 'corporate' },
-        { id: 'poor-integration', label: 'Poor integration with my environment', value: 'poor-integration' },
-        { id: 'lack-trust', label: 'Lack of trust from my team / reviewers', value: 'lack-trust' },
-        { id: 'cost', label: 'Cost of AI tools', value: 'cost' },
-        { id: 'no-challenges', label: 'I face no significant challenges', value: 'no-challenges' },
-        { id: 'other', label: 'Other (please specify)', value: 'other' },
-      ],
-    },
-    {
-      slug: 'company-policy',
-      prompt: 'Does your company have formal guidelines or policies on the use of AI coding tools?',
-      type: 'single' as const,
-      categorySlug: 'vibe-engineering',
-      order: 5,
-      options: [
-        { id: 'encouraged', label: 'Yes — AI tools are officially encouraged', value: 'encouraged' },
-        { id: 'allowed-restrictions', label: 'Yes — AI tools are allowed with restrictions', value: 'allowed-restrictions' },
-        { id: 'discouraged', label: 'Yes — AI tools are officially discouraged', value: 'discouraged' },
-        { id: 'banned', label: 'Yes — AI tools are banned', value: 'banned' },
-        { id: 'no-policy', label: 'No — No policy exists', value: 'no-policy' },
-        { id: 'not-sure', label: 'Not sure', value: 'not-sure' },
-      ],
-    },
-    {
-      slug: 'team-adoption',
-      prompt: 'How widely are AI coding tools or agents adopted within your team or organization?',
-      type: 'single' as const,
-      categorySlug: 'vibe-engineering',
-      order: 6,
-      options: [
-        { id: 'everyone-daily', label: 'Everyone uses them daily', value: 'everyone-daily' },
-        { id: 'most-regularly', label: 'Most developers use them regularly', value: 'most-regularly' },
-        { id: 'some', label: "Some developers use them, others don't", value: 'some' },
-        { id: 'few-early', label: 'Only a few early adopters use them', value: 'few-early' },
-        { id: 'discouraged-used', label: 'Officially discouraged, but still used informally', value: 'discouraged-used' },
-        { id: 'banned', label: 'Officially banned', value: 'banned' },
-        { id: 'not-sure', label: 'Not sure', value: 'not-sure' },
-      ],
-    },
-    {
-      slug: 'productivity-impact',
-      prompt: 'How have AI coding tools or agents affected your productivity?',
-      type: 'single' as const,
-      categorySlug: 'vibe-engineering',
-      order: 7,
-      options: [
-        { id: 'significant-increase', label: 'Significantly increased my productivity', value: 'significant-increase' },
-        { id: 'moderate-increase', label: 'Moderately increased my productivity', value: 'moderate-increase' },
-        { id: 'slight-increase', label: 'Slightly increased my productivity', value: 'slight-increase' },
-        { id: 'no-change', label: 'No noticeable change', value: 'no-change' },
-        { id: 'slight-decrease', label: 'Slight decrease in productivity', value: 'slight-decrease' },
-        { id: 'significant-decrease', label: 'Significant decrease in productivity', value: 'significant-decrease' },
-        { id: 'na', label: "Not applicable / I don't use AI tools", value: 'na' },
-      ],
-    },
-    {
-      slug: 'better-developer',
-      prompt: 'AI coding tools or agents make you a better developer:',
-      type: 'single' as const,
-      categorySlug: 'vibe-engineering',
-      order: 8,
-      options: [
-        { id: 'strongly-agree', label: 'Strongly agree', value: 'strongly-agree' },
-        { id: 'agree', label: 'Agree', value: 'agree' },
-        { id: 'neutral', label: 'Neutral', value: 'neutral' },
-        { id: 'disagree', label: 'Disagree', value: 'disagree' },
-        { id: 'strongly-disagree', label: 'Strongly disagree', value: 'strongly-disagree' },
-      ],
-    },
-    {
-      slug: 'measure-impact',
-      prompt: 'How do you measure the impact of AI coding tools on your productivity?',
-      type: 'multiple' as const,
-      categorySlug: 'vibe-engineering',
-      order: 9,
-      options: [
-        { id: 'commits-prs', label: 'Number of commits / PRs', value: 'commits-prs' },
-        { id: 'tasks-agents', label: 'Number of tasks assigned to agents', value: 'tasks-agents' },
-        { id: 'hours-saved', label: 'Weekly hours saved', value: 'hours-saved' },
-        { id: 'human-equivalent', label: 'Human-equivalent hours completed by agents', value: 'human-equivalent' },
-        { id: 'maintainability', label: 'Code maintainability', value: 'maintainability' },
-        { id: 'cost-savings', label: 'AI cost and savings', value: 'cost-savings' },
-        { id: 'change-failure', label: 'Change failure percentage', value: 'change-failure' },
-      ],
-    },
-    {
-      slug: 'delegate-tasks',
-      prompt: 'Which tasks would you feel comfortable fully delegating to an autonomous coding agent?',
-      type: 'multiple' as const,
-      categorySlug: 'vibe-engineering',
-      order: 10,
-      options: [
-        { id: 'setup', label: 'Setting up a project or environment', value: 'setup' },
-        { id: 'migrations', label: 'Running migrations or database tasks', value: 'migrations' },
-        { id: 'refactoring', label: 'Refactoring code with tests', value: 'refactoring' },
-        { id: 'boilerplate', label: 'Writing boilerplate code', value: 'boilerplate' },
-        { id: 'documentation', label: 'Generating documentation', value: 'documentation' },
-        { id: 'cicd', label: 'Creating CI/CD pipelines', value: 'cicd' },
-        { id: 'bugs', label: 'Investigating bugs', value: 'bugs' },
-        { id: 'pr-review', label: 'Reviewing pull requests', value: 'pr-review' },
-        { id: 'deployments', label: 'Managing deployments', value: 'deployments' },
-        { id: 'none', label: 'None — I only want assisted, not autonomous agents', value: 'none' },
-        { id: 'other', label: 'Other (please specify)', value: 'other' },
-      ],
-    },
-    {
-      slug: 'codebase-access',
-      prompt: 'What level of access do your AI tools or agents have to your codebase?',
-      type: 'single' as const,
-      categorySlug: 'vibe-engineering',
-      order: 11,
-      options: [
-        { id: 'full', label: 'Full repository access (all files, branches, history)', value: 'full' },
-        { id: 'partial', label: 'Partial access (selected folders or files)', value: 'partial' },
-        { id: 'read-only', label: 'Read-only access', value: 'read-only' },
-        { id: 'embeddings', label: 'Access via embeddings / vector store', value: 'embeddings' },
-        { id: 'mcp-api', label: 'Access via MCP or other tool APIs', value: 'mcp-api' },
-        { id: 'manual', label: 'No direct access — I paste code manually', value: 'manual' },
-        { id: 'not-sure', label: 'Not sure', value: 'not-sure' },
-      ],
-    },
-    {
-      slug: 'skill-development',
-      prompt: 'How have AI coding tools affected your personal skill development?',
-      type: 'single' as const,
-      categorySlug: 'vibe-engineering',
-      order: 12,
-      options: [
-        { id: 'learn-faster', label: 'They are helping me learn faster', value: 'learn-faster' },
-        { id: 'more-patterns', label: 'They expose me to more patterns/languages than before', value: 'more-patterns' },
-        { id: 'dependent', label: 'They make me more dependent, but still help', value: 'dependent' },
-        { id: 'slowing', label: 'They are slowing down my learning', value: 'slowing' },
-        { id: 'harming', label: 'They are harming my skills', value: 'harming' },
-        { id: 'no-impact', label: 'No noticeable impact', value: 'no-impact' },
-        { id: 'not-sure', label: 'Not sure', value: 'not-sure' },
-      ],
-    },
-
-    // === LANGUAGES & TOOLS (5 questions) ===
+    // === LANGUAGES & TOOLS (13 questions: #8-20) ===
     {
       slug: 'programming-languages',
       prompt: 'What programming languages do you use?',
@@ -541,15 +341,14 @@ async function resetSurvey() {
         { id: 'other', label: 'Other (please specify)', value: 'other' },
       ],
     },
-
-    // === MODELS (3 questions) ===
+    // Models questions (#13-15)
     {
       slug: 'models-use',
       prompt: 'Which models do you use?',
       description: 'Select all that apply',
       type: 'multiple' as const,
-      categorySlug: 'models',
-      order: 1,
+      categorySlug: 'languages-tools',
+      order: 6,
       options: [
         { id: 'opus-4-5', label: 'Opus 4.5', value: 'opus-4-5' },
         { id: 'sonnet-4-5', label: 'Sonnet 4.5', value: 'sonnet-4-5' },
@@ -569,8 +368,8 @@ async function resetSurvey() {
       prompt: 'Which models are you likely to recommend?',
       description: 'Select one',
       type: 'single' as const,
-      categorySlug: 'models',
-      order: 2,
+      categorySlug: 'languages-tools',
+      order: 7,
       options: [
         { id: 'opus-4-5', label: 'Opus 4.5', value: 'opus-4-5' },
         { id: 'sonnet-4-5', label: 'Sonnet 4.5', value: 'sonnet-4-5' },
@@ -590,8 +389,8 @@ async function resetSurvey() {
       prompt: 'Which models would you like to use in the future?',
       description: 'Select all that apply',
       type: 'multiple' as const,
-      categorySlug: 'models',
-      order: 3,
+      categorySlug: 'languages-tools',
+      order: 8,
       options: [
         { id: 'opus-4-5', label: 'Opus 4.5', value: 'opus-4-5' },
         { id: 'sonnet-4-5', label: 'Sonnet 4.5', value: 'sonnet-4-5' },
@@ -606,14 +405,13 @@ async function resetSurvey() {
         { id: 'dont-know', label: "I don't know which model my tool uses", value: 'dont-know' },
       ],
     },
-
-    // === MCP (5 questions) ===
+    // MCP questions (#16-20)
     {
       slug: 'mcp-usage',
       prompt: 'Do you currently use any MCP servers?',
       type: 'single' as const,
-      categorySlug: 'mcp',
-      order: 1,
+      categorySlug: 'languages-tools',
+      order: 9,
       options: [
         { id: 'yes-several', label: 'Yes — I actively use several', value: 'yes-several' },
         { id: 'yes-one', label: 'Yes — I use one', value: 'yes-one' },
@@ -626,8 +424,8 @@ async function resetSurvey() {
       slug: 'mcp-count',
       prompt: 'How many MCP servers do you use regularly?',
       type: 'single' as const,
-      categorySlug: 'mcp',
-      order: 2,
+      categorySlug: 'languages-tools',
+      order: 10,
       options: [
         { id: '1', label: '1', value: '1' },
         { id: '2-3', label: '2–3', value: '2-3' },
@@ -640,8 +438,8 @@ async function resetSurvey() {
       slug: 'mcp-selection-factor',
       prompt: 'Have you selected a coding agent for its support of MCP?',
       type: 'single' as const,
-      categorySlug: 'mcp',
-      order: 3,
+      categorySlug: 'languages-tools',
+      order: 11,
       options: [
         { id: 'yes-major', label: 'Yes — MCP support was a major deciding factor', value: 'yes-major' },
         { id: 'yes-somewhat', label: 'Yes — MCP support influenced my decision somewhat', value: 'yes-somewhat' },
@@ -655,15 +453,15 @@ async function resetSurvey() {
       prompt: 'Which MCP servers do you care about?',
       description: 'Open-ended response',
       type: 'text' as const,
-      categorySlug: 'mcp',
-      order: 4,
+      categorySlug: 'languages-tools',
+      order: 12,
     },
     {
       slug: 'mcp-importance',
       prompt: 'How important is MCP support for your future tooling decisions?',
       type: 'single' as const,
-      categorySlug: 'mcp',
-      order: 5,
+      categorySlug: 'languages-tools',
+      order: 13,
       options: [
         { id: 'extremely', label: 'Extremely important — a must-have', value: 'extremely' },
         { id: 'important', label: 'Important — strong preference', value: 'important' },
@@ -674,12 +472,212 @@ async function resetSurvey() {
       ],
     },
 
-    // === OPEN-ENDED (1 question) ===
+    // === VIBE ENGINEERING (12 questions: #21-32) ===
+    {
+      slug: 'ai-tools-frequency',
+      prompt: 'How often do you use AI coding tools?',
+      type: 'single' as const,
+      categorySlug: 'vibe-engineering',
+      order: 1,
+      options: [
+        { id: 'daily', label: 'Yes, daily', value: 'daily' },
+        { id: 'weekly', label: 'Yes, multiple times per week', value: 'weekly' },
+        { id: 'occasionally', label: 'Occasionally', value: 'occasionally' },
+        { id: 'tried-stopped', label: "I've tried them but don't use them anymore", value: 'tried-stopped' },
+        { id: 'not-yet', label: 'No, not yet', value: 'not-yet' },
+        { id: 'not-interested', label: "No, and I'm not interested", value: 'not-interested' },
+      ],
+    },
+    {
+      slug: 'review-time',
+      prompt: 'How much time do you spend reviewing AI-generated code?',
+      type: 'single' as const,
+      categorySlug: 'vibe-engineering',
+      order: 2,
+      options: [
+        { id: 'none', label: "I don't, I fully trust the generated code", value: 'none' },
+        { id: 'less-1min', label: 'Less than 1 minute per response', value: 'less-1min' },
+        { id: '1-3min', label: '1–3 minutes per response', value: '1-3min' },
+        { id: '3-5min', label: '3–5 minutes per response', value: '3-5min' },
+        { id: 'more-5min', label: 'More than 5 minutes per response', value: 'more-5min' },
+        { id: 'not-sure', label: 'Not sure', value: 'not-sure' },
+      ],
+    },
+    {
+      slug: 'primary-reasons',
+      prompt: 'What are your primary reasons for using AI coding tools or agents?',
+      description: 'Select all that apply',
+      type: 'multiple' as const,
+      categorySlug: 'vibe-engineering',
+      order: 3,
+      options: [
+        { id: 'faster', label: 'To code faster', value: 'faster' },
+        { id: 'reduce-repetitive', label: 'To reduce repetitive tasks', value: 'reduce-repetitive' },
+        { id: 'improve-quality', label: 'To improve code quality', value: 'improve-quality' },
+        { id: 'explore', label: 'To explore unfamiliar languages or frameworks', value: 'explore' },
+        { id: 'understand', label: 'To better understand existing code', value: 'understand' },
+        { id: 'generate-tests', label: 'To generate tests or documentation automatically', value: 'generate-tests' },
+        { id: 'prototype', label: 'To prototype ideas quickly', value: 'prototype' },
+        { id: 'learn', label: 'To learn or improve my skills', value: 'learn' },
+        { id: 'other', label: 'Other (please specify)', value: 'other' },
+      ],
+    },
+    {
+      slug: 'biggest-challenges',
+      prompt: 'What are the biggest challenges you face when using AI coding tools?',
+      description: 'Select all that apply',
+      type: 'multiple' as const,
+      categorySlug: 'vibe-engineering',
+      order: 4,
+      options: [
+        { id: 'hallucinations', label: 'Inaccurate or hallucinated code', value: 'hallucinations' },
+        { id: 'limited-understanding', label: 'Limited understanding of my codebase', value: 'limited-understanding' },
+        { id: 'hard-debug', label: 'Hard to debug AI-generated code', value: 'hard-debug' },
+        { id: 'security', label: 'Security or privacy concerns', value: 'security' },
+        { id: 'corporate', label: 'Corporate restrictions / compliance', value: 'corporate' },
+        { id: 'poor-integration', label: 'Poor integration with my environment', value: 'poor-integration' },
+        { id: 'lack-trust', label: 'Lack of trust from my team / reviewers', value: 'lack-trust' },
+        { id: 'cost', label: 'Cost of AI tools', value: 'cost' },
+        { id: 'no-challenges', label: 'I face no significant challenges', value: 'no-challenges' },
+        { id: 'other', label: 'Other (please specify)', value: 'other' },
+      ],
+    },
+    {
+      slug: 'company-policy',
+      prompt: 'Does your company have formal guidelines or policies on the use of AI coding tools?',
+      type: 'single' as const,
+      categorySlug: 'vibe-engineering',
+      order: 5,
+      options: [
+        { id: 'encouraged', label: 'Yes — AI tools are officially encouraged', value: 'encouraged' },
+        { id: 'allowed-restrictions', label: 'Yes — AI tools are allowed with restrictions', value: 'allowed-restrictions' },
+        { id: 'discouraged', label: 'Yes — AI tools are officially discouraged', value: 'discouraged' },
+        { id: 'banned', label: 'Yes — AI tools are banned', value: 'banned' },
+        { id: 'no-policy', label: 'No — No policy exists', value: 'no-policy' },
+        { id: 'not-sure', label: 'Not sure', value: 'not-sure' },
+      ],
+    },
+    {
+      slug: 'team-adoption',
+      prompt: 'How widely are AI coding tools or agents adopted within your team or organization?',
+      type: 'single' as const,
+      categorySlug: 'vibe-engineering',
+      order: 6,
+      options: [
+        { id: 'everyone-daily', label: 'Everyone uses them daily', value: 'everyone-daily' },
+        { id: 'most-regularly', label: 'Most developers use them regularly', value: 'most-regularly' },
+        { id: 'some', label: "Some developers use them, others don't", value: 'some' },
+        { id: 'few-early', label: 'Only a few early adopters use them', value: 'few-early' },
+        { id: 'discouraged-used', label: 'Officially discouraged, but still used informally', value: 'discouraged-used' },
+        { id: 'banned', label: 'Officially banned', value: 'banned' },
+        { id: 'not-sure', label: 'Not sure', value: 'not-sure' },
+      ],
+    },
+    {
+      slug: 'productivity-impact',
+      prompt: 'How have AI coding tools or agents affected your productivity?',
+      type: 'single' as const,
+      categorySlug: 'vibe-engineering',
+      order: 7,
+      options: [
+        { id: 'significant-increase', label: 'Significantly increased my productivity', value: 'significant-increase' },
+        { id: 'moderate-increase', label: 'Moderately increased my productivity', value: 'moderate-increase' },
+        { id: 'slight-increase', label: 'Slightly increased my productivity', value: 'slight-increase' },
+        { id: 'no-change', label: 'No noticeable change', value: 'no-change' },
+        { id: 'slight-decrease', label: 'Slight decrease in productivity', value: 'slight-decrease' },
+        { id: 'significant-decrease', label: 'Significant decrease in productivity', value: 'significant-decrease' },
+        { id: 'na', label: "Not applicable / I don't use AI tools", value: 'na' },
+      ],
+    },
+    {
+      slug: 'better-developer',
+      prompt: 'AI coding tools or agents make you a better developer:',
+      type: 'single' as const,
+      categorySlug: 'vibe-engineering',
+      order: 8,
+      options: [
+        { id: 'strongly-agree', label: 'Strongly agree', value: 'strongly-agree' },
+        { id: 'agree', label: 'Agree', value: 'agree' },
+        { id: 'neutral', label: 'Neutral', value: 'neutral' },
+        { id: 'disagree', label: 'Disagree', value: 'disagree' },
+        { id: 'strongly-disagree', label: 'Strongly disagree', value: 'strongly-disagree' },
+      ],
+    },
+    {
+      slug: 'measure-impact',
+      prompt: 'How do you measure the impact of AI coding tools on your productivity?',
+      type: 'multiple' as const,
+      categorySlug: 'vibe-engineering',
+      order: 9,
+      options: [
+        { id: 'commits-prs', label: 'Number of commits / PRs', value: 'commits-prs' },
+        { id: 'tasks-agents', label: 'Number of tasks assigned to agents', value: 'tasks-agents' },
+        { id: 'hours-saved', label: 'Weekly hours saved', value: 'hours-saved' },
+        { id: 'human-equivalent', label: 'Human-equivalent hours completed by agents', value: 'human-equivalent' },
+        { id: 'maintainability', label: 'Code maintainability', value: 'maintainability' },
+        { id: 'cost-savings', label: 'AI cost and savings', value: 'cost-savings' },
+        { id: 'change-failure', label: 'Change failure percentage', value: 'change-failure' },
+      ],
+    },
+    {
+      slug: 'delegate-tasks',
+      prompt: 'Which tasks would you feel comfortable fully delegating to an autonomous coding agent?',
+      type: 'multiple' as const,
+      categorySlug: 'vibe-engineering',
+      order: 10,
+      options: [
+        { id: 'setup', label: 'Setting up a project or environment', value: 'setup' },
+        { id: 'migrations', label: 'Running migrations or database tasks', value: 'migrations' },
+        { id: 'refactoring', label: 'Refactoring code with tests', value: 'refactoring' },
+        { id: 'boilerplate', label: 'Writing boilerplate code', value: 'boilerplate' },
+        { id: 'documentation', label: 'Generating documentation', value: 'documentation' },
+        { id: 'cicd', label: 'Creating CI/CD pipelines', value: 'cicd' },
+        { id: 'bugs', label: 'Investigating bugs', value: 'bugs' },
+        { id: 'pr-review', label: 'Reviewing pull requests', value: 'pr-review' },
+        { id: 'deployments', label: 'Managing deployments', value: 'deployments' },
+        { id: 'none', label: 'None — I only want assisted, not autonomous agents', value: 'none' },
+        { id: 'other', label: 'Other (please specify)', value: 'other' },
+      ],
+    },
+    {
+      slug: 'codebase-access',
+      prompt: 'What level of access do your AI tools or agents have to your codebase?',
+      type: 'single' as const,
+      categorySlug: 'vibe-engineering',
+      order: 11,
+      options: [
+        { id: 'full', label: 'Full repository access (all files, branches, history)', value: 'full' },
+        { id: 'partial', label: 'Partial access (selected folders or files)', value: 'partial' },
+        { id: 'read-only', label: 'Read-only access', value: 'read-only' },
+        { id: 'embeddings', label: 'Access via embeddings / vector store', value: 'embeddings' },
+        { id: 'mcp-api', label: 'Access via MCP or other tool APIs', value: 'mcp-api' },
+        { id: 'manual', label: 'No direct access — I paste code manually', value: 'manual' },
+        { id: 'not-sure', label: 'Not sure', value: 'not-sure' },
+      ],
+    },
+    {
+      slug: 'skill-development',
+      prompt: 'How have AI coding tools affected your personal skill development?',
+      type: 'single' as const,
+      categorySlug: 'vibe-engineering',
+      order: 12,
+      options: [
+        { id: 'learn-faster', label: 'They are helping me learn faster', value: 'learn-faster' },
+        { id: 'more-patterns', label: 'They expose me to more patterns/languages than before', value: 'more-patterns' },
+        { id: 'dependent', label: 'They make me more dependent, but still help', value: 'dependent' },
+        { id: 'slowing', label: 'They are slowing down my learning', value: 'slowing' },
+        { id: 'harming', label: 'They are harming my skills', value: 'harming' },
+        { id: 'no-impact', label: 'No noticeable impact', value: 'no-impact' },
+        { id: 'not-sure', label: 'Not sure', value: 'not-sure' },
+      ],
+    },
+
+    // === FINAL THOUGHTS (1 question: #33) ===
     {
       slug: 'anything-else',
       prompt: "Is there anything else you'd like to share?",
       type: 'text' as const,
-      categorySlug: 'open-ended',
+      categorySlug: 'final-thoughts',
       order: 1,
     },
   ];
@@ -717,11 +715,9 @@ async function resetSurvey() {
   console.log('✅ Reset complete!\n');
   console.log('Survey structure:');
   console.log('  1. About You: 7 questions');
-  console.log('  2. Vibe Engineering: 12 questions');
-  console.log('  3. Languages & Tools: 5 questions');
-  console.log('  4. Models: 3 questions');
-  console.log('  5. MCP: 5 questions');
-  console.log('  6. Open-Ended: 1 question');
+  console.log('  2. Languages & Tools: 13 questions (tools + models + MCP)');
+  console.log('  3. Vibe Engineering: 12 questions');
+  console.log('  4. Final Thoughts: 1 question');
   console.log('  ─────────────────────');
   console.log('  Total: 33 questions');
 }
@@ -732,4 +728,3 @@ resetSurvey()
     console.error('❌ Reset failed:', err);
     process.exit(1);
   });
-
