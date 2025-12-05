@@ -727,14 +727,12 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
       <div className="terminal-line mt-4 text-gray-400">
         {surveyData.survey.description || 'This survey explores how developers use AI coding agents.'}
       </div>
-      <div className="terminal-line text-gray-400">
-        Your responses will help shape the future of developer tools.
-      </div>
+
       <div className="terminal-line mt-6 text-gray-500">
         <span className="text-[#CD8B6A]">ℹ</span> Estimated time: 5-10 minutes
       </div>
       <div className="terminal-line text-gray-500">
-        <span className="text-[#CD8B6A]">ℹ</span> {totalQuestions} questions across {surveyData.categories.length} categories
+        <span className="text-[#CD8B6A]">ℹ</span> {totalQuestions} questions
       </div>
       <div className="terminal-line text-gray-500">
         <span className="text-[#CD8B6A]">ℹ</span> All questions can be skipped
