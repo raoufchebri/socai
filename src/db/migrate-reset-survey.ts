@@ -400,6 +400,7 @@ async function resetSurvey() {
       categorySlug: 'languages-tools',
       order: 11,
       options: [
+        { id: 'none', label: 'None', value: 'none' },
         { id: 'opus-4-5', label: 'Opus 4.5', value: 'opus-4-5' },
         { id: 'sonnet-4-5', label: 'Sonnet 4.5', value: 'sonnet-4-5' },
         { id: 'composer-1', label: 'Composer 1', value: 'composer-1' },
@@ -410,7 +411,6 @@ async function resetSurvey() {
         { id: 'grok-code', label: 'Grok Code', value: 'grok-code' },
         { id: 'kimi-k2', label: 'Kimi K2', value: 'kimi-k2' },
         { id: 'other', label: 'Other', value: 'other' },
-        { id: 'dont-know', label: "I don't know which model my tool uses", value: 'dont-know' },
       ],
     },
     // MCP questions (#16-20)
@@ -435,6 +435,7 @@ async function resetSurvey() {
       categorySlug: 'languages-tools',
       order: 13,
       options: [
+        { id: 'none', label: 'None', value: 'none' },
         { id: '1', label: '1', value: '1' },
         { id: '2-3', label: '2–3', value: '2-3' },
         { id: '4-5', label: '4–5', value: '4-5' },

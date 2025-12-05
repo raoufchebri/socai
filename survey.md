@@ -266,7 +266,17 @@ The objective is to understand the demography: age, experience, location, and ba
 
 ### **15. Which models would you like to use in the future?**
 
-*(Same list as above)*
+* None
+* Opus 4.5
+* Sonnet 4.5
+* Composer 1
+* GPT-5.1 Codex High
+* GPT-5.1
+* GPT-5.1 Codex Mini
+* Gemini 3 Pro
+* Grok Code
+* Kimi K2
+* Other
 
 ### **16. Do you currently use any MCP servers?**
 
@@ -278,6 +288,7 @@ The objective is to understand the demography: age, experience, location, and ba
 
 ### **17. How many MCP servers do you use regularly?**
 
+* None
 * 1
 * 2–3
 * 4–5
