@@ -17,6 +17,12 @@ export const metadata: Metadata = {
   description: "Annual survey exploring how developers use AI coding tools and agents. Help shape the future of developer tools.",
   keywords: ["AI coding", "developer survey", "AI tools", "software development", "programming"],
   authors: [{ name: "Devographics" }],
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/favicon.svg",
+  },
   openGraph: {
     title: "State of Code Survey",
     description: "Annual survey exploring how developers use AI coding tools and agents.",
