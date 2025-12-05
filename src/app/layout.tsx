@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   description: "Annual survey exploring how developers use AI coding tools and agents. Help shape the future of developer tools.",
   keywords: ["AI coding", "developer survey", "AI tools", "software development", "programming"],
   authors: [{ name: "Devographics" }],
+  metadataBase: new URL('https://stateofcode.ai'),
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
@@ -24,15 +25,25 @@ export const metadata: Metadata = {
     apple: "/favicon.svg",
   },
   openGraph: {
-    title: "State of Code Survey",
+    title: "State of Code Survey 2025",
     description: "Annual survey exploring how developers use AI coding tools and agents.",
     type: "website",
     siteName: "State of Code",
+    url: "https://stateofcode.ai",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "State of Code 2025 - Annual developer survey on AI coding tools",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "State of Code Survey",
+    title: "State of Code Survey 2025",
     description: "Annual survey exploring how developers use AI coding tools and agents.",
+    images: ["/og-image.png"],
   },
 };
 
