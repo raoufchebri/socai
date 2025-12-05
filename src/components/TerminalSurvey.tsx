@@ -737,7 +737,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
       <div className="terminal-line text-gray-500">
         <span className="text-[#CD8B6A]">ℹ</span> All questions can be skipped
       </div>
-      <div className="terminal-line mt-8">
+      <div className="terminal-line mt-8 hidden sm:block">
         <span className="terminal-cursor"></span>
         <span className="text-[#CD8B6A] ml-2">Press ENTER to begin</span>
       </div>
@@ -776,9 +776,15 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
               className="w-full bg-[#21262d] border border-[#30363d] rounded px-4 py-3 text-gray-200 font-mono focus:outline-none focus:border-[#CD8B6A] min-h-[100px] resize-y"
               placeholder="Type your answer..."
             />
-            <div className="text-gray-500 text-xs mt-2">
+            <div className="text-gray-500 text-xs mt-2 desktop-hint">
               Press <kbd className="px-1 py-0.5 bg-gray-700 rounded">⌘</kbd>+<kbd className="px-1 py-0.5 bg-gray-700 rounded">Enter</kbd> to submit
             </div>
+            <button
+              onClick={submitAnswer}
+              className="mobile-submit-btn"
+            >
+              Submit Answer →
+            </button>
           </div>
         ) : question.type === 'scale' ? (
           <div className="mt-4 space-y-1">
@@ -1047,7 +1053,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
 
         </div>
 
-        {/* Keyboard hints */}
+        {/* Keyboard hints - hidden on mobile */}
         <div className="mt-6 pt-4 border-t border-gray-700">
           <div className="terminal-hints flex-wrap">
             <span className="terminal-hint"><kbd>↑↓</kbd> tools</span>
@@ -1057,7 +1063,8 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
             <span className="terminal-hint"><kbd>s</kbd> skip group</span>
             <span className="terminal-hint"><kbd>[ ]</kbd> tabs</span>
           </div>
-          <div className="mt-4 flex justify-end">
+          {/* Desktop continue link */}
+          <div className="mt-4 hidden sm:flex justify-end">
             <button
               onClick={handleMatrixComplete}
               className="px-4 py-1 text-[#CD8B6A] font-mono text-sm hover:underline"
@@ -1065,6 +1072,13 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
               [Continue →]
             </button>
           </div>
+          {/* Mobile continue button */}
+          <button
+            onClick={handleMatrixComplete}
+            className="mobile-submit-btn mt-4"
+          >
+            Continue →
+          </button>
         </div>
       </div>
     );
@@ -1159,7 +1173,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
             <span className="text-yellow-400 animate-pulse">⏳ Submitting your answers...</span>
           </div>
         ) : (
-          <div className="terminal-line">
+          <div className="terminal-line hidden sm:block">
             <span className="text-[#CD8B6A]">Press ENTER to submit survey</span>
           </div>
         )}
@@ -1286,6 +1300,54 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
         {phase === 'recap' && renderRecap()}
         {phase === 'complete' && renderComplete()}
       </div>
+
+      {/* Mobile Navigation Bar - visible only on mobile */}
+      {phase === 'intro' && (
+        <div className="mobile-nav sm:hidden">
+          <button
+            onClick={() => setPhase('questions')}
+            className="mobile-nav-btn mobile-nav-btn-primary flex-1"
+          >
+            Start Survey →
+          </button>
+        </div>
+      )}
+      
+      {phase === 'questions' && (
+        <div className="mobile-nav sm:hidden">
+          <button
+            onClick={goToPreviousQuestion}
+            disabled={currentCategoryIndex === 0 && currentQuestionIndexInCategory === 0}
+            className="mobile-nav-btn"
+          >
+            ← Back
+          </button>
+          <button
+            onClick={goToNextQuestion}
+            className="mobile-nav-btn"
+          >
+            Skip
+          </button>
+          <button
+            onClick={submitAnswer}
+            className="mobile-nav-btn mobile-nav-btn-primary"
+          >
+            Next →
+          </button>
+        </div>
+      )}
+
+      {phase === 'recap' && (
+        <div className="mobile-nav sm:hidden">
+          <button
+            onClick={handleComplete}
+            disabled={isSubmitting}
+            className="mobile-nav-btn mobile-nav-btn-primary flex-1"
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit Survey →'}
+          </button>
+        </div>
+      )}
 
       {/* Terminal footer */}
       <div className="terminal-footer">
