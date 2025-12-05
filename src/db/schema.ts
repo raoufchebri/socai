@@ -115,6 +115,7 @@ export const sessions = pgTable('sessions', {
   id: serial('id').primaryKey(),
   token: varchar('token', { length: 64 }).notNull().unique(),
   surveyId: integer('survey_id').references(() => surveys.id).notNull(),
+  ip: varchar('ip', { length: 45 }), // IPv6 compatible (max 45 chars)
   startedAt: timestamp('started_at').defaultNow().notNull(),
   completedAt: timestamp('completed_at'),
   lastActivityAt: timestamp('last_activity_at').defaultNow().notNull(),

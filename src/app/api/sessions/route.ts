@@ -1,8 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { sessions, surveys, responses, questions } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and, isNotNull } from 'drizzle-orm';
 import { randomBytes } from 'crypto';
+
+// Helper to get client IP from request
+function getClientIP(request: NextRequest): string {
+  // Check various headers that might contain the real IP
+  const forwarded = request.headers.get('x-forwarded-for');
+  if (forwarded) {
+    // x-forwarded-for can contain multiple IPs, take the first one
+    return forwarded.split(',')[0].trim();
+  }
+  
+  const realIP = request.headers.get('x-real-ip');
+  if (realIP) {
+    return realIP;
+  }
+  
+  // Fallback - this usually won't be the real IP behind a proxy
+  return 'unknown';
+}
 
 // Create a new session
 export async function POST(request: NextRequest) {
@@ -36,13 +54,56 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get client IP
+    const clientIP = getClientIP(request);
+
+    // Check if there's an existing completed session from this IP
+    if (clientIP !== 'unknown') {
+      const existingCompletedSession = await db.query.sessions.findFirst({
+        where: and(
+          eq(sessions.surveyId, survey.id),
+          eq(sessions.ip, clientIP),
+          isNotNull(sessions.completedAt)
+        ),
+      });
+
+      if (existingCompletedSession) {
+        return NextResponse.json(
+          { 
+            error: 'You have already submitted this survey',
+            alreadyCompleted: true,
+          },
+          { status: 403 }
+        );
+      }
+
+      // Check if there's an existing non-completed session from this IP
+      const existingSession = await db.query.sessions.findFirst({
+        where: and(
+          eq(sessions.surveyId, survey.id),
+          eq(sessions.ip, clientIP)
+        ),
+      });
+
+      if (existingSession) {
+        // Return the existing session
+        return NextResponse.json({
+          token: existingSession.token,
+          surveyId: existingSession.surveyId,
+          startedAt: existingSession.startedAt,
+          existingSession: true,
+        });
+      }
+    }
+
     // Generate a unique token
     const token = randomBytes(32).toString('hex');
 
-    // Create the session
+    // Create the session with IP
     const [session] = await db.insert(sessions).values({
       token,
       surveyId: survey.id,
+      ip: clientIP !== 'unknown' ? clientIP : null,
     }).returning();
 
     return NextResponse.json({

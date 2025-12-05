@@ -16,6 +16,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
     isLoading,
     error,
     isSubmitting,
+    isCompleted,
     currentQuestions,
     totalQuestions,
     answeredCount,
@@ -36,6 +37,13 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
   const [otherText, setOtherText] = useState('');
   const [email, setEmail] = useState('');
   const [emailSubmitted, setEmailSubmitted] = useState(false);
+
+  // Auto-redirect to complete phase if session was already completed
+  useEffect(() => {
+    if (isCompleted && phase !== 'complete') {
+      setPhase('complete');
+    }
+  }, [isCompleted, phase]);
 
   // Shortcut keys: 1-9, 0, then letters (excluding reserved: j, k, s, b)
   const LETTER_SHORTCUTS = 'acdefghilmnopqrtuvwxyz'.split('');

@@ -21,6 +21,7 @@ interface UseLocalFirstSurveyReturn {
   error: string | null;
   isSubmitting: boolean;
   hasUnsavedChanges: boolean;
+  isCompleted: boolean;
   
   // Computed
   currentQuestions: Question[];
@@ -45,6 +46,7 @@ export function useLocalFirstSurvey({ year }: UseLocalFirstSurveyOptions): UseLo
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
   const [serverAnswers, setServerAnswers] = useState<Record<string, Answer>>({});
   
   const initialLoadComplete = useRef(false);
@@ -107,14 +109,23 @@ export function useLocalFirstSurvey({ year }: UseLocalFirstSurveyOptions): UseLo
             const sessionJson = await sessionRes.json();
             setSessionToken(sessionJson.session.token);
             
-            // Merge server answers with local (local takes precedence for newer changes)
-            const serverAns = sessionJson.answers || {};
-            setServerAnswers(serverAns);
-            
-            // Combine: use local if exists, otherwise use server
-            const combined = { ...serverAns, ...localAnswers };
-            setAnswers(combined);
-            saveLocalAnswers(year, combined);
+            // Check if session was already completed
+            if (sessionJson.session.completedAt) {
+              setIsCompleted(true);
+              // Load server answers for display
+              const serverAns = sessionJson.answers || {};
+              setServerAnswers(serverAns);
+              setAnswers(serverAns);
+            } else {
+              // Merge server answers with local (local takes precedence for newer changes)
+              const serverAns = sessionJson.answers || {};
+              setServerAnswers(serverAns);
+              
+              // Combine: use local if exists, otherwise use server
+              const combined = { ...serverAns, ...localAnswers };
+              setAnswers(combined);
+              saveLocalAnswers(year, combined);
+            }
           } else {
             // Invalid session, create new one
             await createNewSession(year);
@@ -145,6 +156,13 @@ export function useLocalFirstSurvey({ year }: UseLocalFirstSurveyOptions): UseLo
         const data = await res.json();
         setSessionToken(data.token);
         localStorage.setItem(`${SESSION_TOKEN_KEY}_${surveyYear}`, data.token);
+      } else if (res.status === 403) {
+        // Already completed from this IP
+        const data = await res.json();
+        if (data.alreadyCompleted) {
+          setIsCompleted(true);
+          setError('You have already submitted this survey');
+        }
       }
     }
 
@@ -231,14 +249,20 @@ export function useLocalFirstSurvey({ year }: UseLocalFirstSurveyOptions): UseLo
       }
 
       // Mark session as complete
-      await fetch('/api/sessions/complete', {
+      const completeRes = await fetch('/api/sessions/complete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: sessionToken }),
       });
 
+      if (!completeRes.ok) {
+        const data = await completeRes.json();
+        throw new Error(data.error || 'Failed to complete session');
+      }
+
       // Update server answers to match local
       setServerAnswers({ ...answers });
+      setIsCompleted(true);
       
       // Clear local storage after successful submission
       localStorage.removeItem(`${LOCAL_ANSWERS_KEY}_${year}`);
@@ -283,6 +307,7 @@ export function useLocalFirstSurvey({ year }: UseLocalFirstSurveyOptions): UseLo
     error,
     isSubmitting,
     hasUnsavedChanges,
+    isCompleted,
     currentQuestions,
     totalQuestions,
     answeredCount,

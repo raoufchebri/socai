@@ -28,6 +28,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check if already completed - prevent re-submission
+    if (session.completedAt) {
+      return NextResponse.json(
+        { error: 'Survey already submitted', alreadyCompleted: true },
+        { status: 400 }
+      );
+    }
+
     // Mark as complete
     const [updatedSession] = await db
       .update(sessions)
