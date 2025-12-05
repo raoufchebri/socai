@@ -4,6 +4,7 @@ export interface QuestionOption {
   id: string;
   label: string;
   value: string;
+  allowCustomText?: boolean; // When true, shows a text input when this option is selected
 }
 
 export interface Question {
@@ -95,7 +96,7 @@ export const surveyQuestions: SurveySection[] = [
           { id: 'cto', label: 'CTO / VP Engineering', value: 'cto' },
           { id: 'student', label: 'Student', value: 'student' },
           { id: 'hobbyist', label: 'Hobbyist', value: 'hobbyist' },
-          { id: 'other', label: 'Other', value: 'other' },
+          { id: 'other', label: 'Other', value: 'other', allowCustomText: true },
         ],
       },
       {
@@ -146,7 +147,7 @@ export const surveyQuestions: SurveySection[] = [
           { id: 'other-asia', label: 'Other (Asia)', value: 'other-asia' },
           { id: 'other-africa', label: 'Other (Africa)', value: 'other-africa' },
           { id: 'other-latam', label: 'Other (Latin America)', value: 'other-latam' },
-          { id: 'other', label: 'Other', value: 'other' },
+          { id: 'other', label: 'Other', value: 'other', allowCustomText: true },
         ],
       },
       {
@@ -177,7 +178,7 @@ export const surveyQuestions: SurveySection[] = [
           { id: 'south-asian', label: 'South Asian', value: 'south-asian' },
           { id: 'southeast-asian', label: 'South East Asian', value: 'southeast-asian' },
           { id: 'white', label: 'White / Caucasian', value: 'white' },
-          { id: 'other', label: 'Other', value: 'other' },
+          { id: 'other', label: 'Other', value: 'other', allowCustomText: true },
           { id: 'prefer-not', label: 'Prefer not to say', value: 'prefer-not' },
         ],
       },
@@ -193,7 +194,7 @@ export const surveyQuestions: SurveySection[] = [
           { id: 'neurodivergent', label: 'Neurodivergent conditions (ADHD, Autism, dyslexia, etc.)', value: 'neurodivergent' },
           { id: 'mental-health', label: 'Mental health conditions (anxiety, depression, PTSD, etc.)', value: 'mental-health' },
           { id: 'chronic-illness', label: 'Chronic illness (diabetes, autoimmune disorders, etc.)', value: 'chronic-illness' },
-          { id: 'other', label: 'Other', value: 'other' },
+          { id: 'other', label: 'Other', value: 'other', allowCustomText: true },
           { id: 'none', label: 'None', value: 'none' },
           { id: 'prefer-not', label: 'Prefer not to say', value: 'prefer-not' },
         ],

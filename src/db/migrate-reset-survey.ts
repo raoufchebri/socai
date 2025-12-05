@@ -214,77 +214,39 @@ async function resetSurvey() {
         { id: 'kiro', label: 'Kiro (IDE)', value: 'kiro' },
         { id: 'antigravity', label: 'Antigravity (IDE)', value: 'antigravity' },
         { id: 'zed', label: 'Zed (IDE)', value: 'zed' },
-        { id: 'other-ide', label: 'Other IDE', value: 'other-ide' },
         // Autonomous Agents
         { id: 'claude-code', label: 'Claude Code (Agent)', value: 'claude-code' },
         { id: 'codex', label: 'Codex (Agent)', value: 'codex' },
         { id: 'devin', label: 'Devin (Agent)', value: 'devin' },
         { id: 'jules', label: 'Jules (Agent)', value: 'jules' },
         { id: 'openhands', label: 'OpenHands (Agent)', value: 'openhands' },
-        { id: 'other-agent', label: 'Other Agent', value: 'other-agent' },
         // VS Code Extensions
         { id: 'github-copilot', label: 'GitHub Copilot (Extension)', value: 'github-copilot' },
         { id: 'cline', label: 'Cline (Extension)', value: 'cline' },
         { id: 'augment-code', label: 'Augment Code (Extension)', value: 'augment-code' },
         { id: 'amazon-q', label: 'Amazon Q Developer (Extension)', value: 'amazon-q' },
-        { id: 'other-extension', label: 'Other Extension', value: 'other-extension' },
         // Code Review
         { id: 'coderabbit', label: 'CodeRabbit (Code Review)', value: 'coderabbit' },
         { id: 'greptile', label: 'Greptile (Code Review)', value: 'greptile' },
         { id: 'qodo', label: 'Qodo (Code Review)', value: 'qodo' },
-        { id: 'other-review', label: 'Other Code Review', value: 'other-review' },
         // App Builders
         { id: 'replit', label: 'Replit (App Builder)', value: 'replit' },
         { id: 'lovable', label: 'Lovable (App Builder)', value: 'lovable' },
-        { id: 'bolt', label: 'Bolt.new (App Builder)', value: 'bolt' },
-        { id: 'other-builder', label: 'Other App Builder', value: 'other-builder' },
       ],
+    },
+    {
+      slug: 'other-tools-use',
+      prompt: 'Other tools you use?',
+      description: 'List any other AI coding tools not mentioned above',
+      type: 'text' as const,
+      categorySlug: 'languages-tools',
+      order: 3,
     },
     {
       slug: 'tools-recommend',
       prompt: 'Which AI coding tool are you most likely to recommend?',
-      description: 'Select one',
+      description: 'Select one from the list, or specify in "Other tools" below',
       type: 'single' as const,
-      categorySlug: 'languages-tools',
-      order: 3,
-      options: [
-        // IDE
-        { id: 'cursor', label: 'Cursor (IDE)', value: 'cursor' },
-        { id: 'windsurf', label: 'Windsurf (IDE)', value: 'windsurf' },
-        { id: 'kiro', label: 'Kiro (IDE)', value: 'kiro' },
-        { id: 'antigravity', label: 'Antigravity (IDE)', value: 'antigravity' },
-        { id: 'zed', label: 'Zed (IDE)', value: 'zed' },
-        { id: 'other-ide', label: 'Other IDE', value: 'other-ide' },
-        // Autonomous Agents
-        { id: 'claude-code', label: 'Claude Code (Agent)', value: 'claude-code' },
-        { id: 'codex', label: 'Codex (Agent)', value: 'codex' },
-        { id: 'devin', label: 'Devin (Agent)', value: 'devin' },
-        { id: 'jules', label: 'Jules (Agent)', value: 'jules' },
-        { id: 'openhands', label: 'OpenHands (Agent)', value: 'openhands' },
-        { id: 'other-agent', label: 'Other Agent', value: 'other-agent' },
-        // VS Code Extensions
-        { id: 'github-copilot', label: 'GitHub Copilot (Extension)', value: 'github-copilot' },
-        { id: 'cline', label: 'Cline (Extension)', value: 'cline' },
-        { id: 'augment-code', label: 'Augment Code (Extension)', value: 'augment-code' },
-        { id: 'amazon-q', label: 'Amazon Q Developer (Extension)', value: 'amazon-q' },
-        { id: 'other-extension', label: 'Other Extension', value: 'other-extension' },
-        // Code Review
-        { id: 'coderabbit', label: 'CodeRabbit (Code Review)', value: 'coderabbit' },
-        { id: 'greptile', label: 'Greptile (Code Review)', value: 'greptile' },
-        { id: 'qodo', label: 'Qodo (Code Review)', value: 'qodo' },
-        { id: 'other-review', label: 'Other Code Review', value: 'other-review' },
-        // App Builders
-        { id: 'replit', label: 'Replit (App Builder)', value: 'replit' },
-        { id: 'lovable', label: 'Lovable (App Builder)', value: 'lovable' },
-        { id: 'bolt', label: 'Bolt.new (App Builder)', value: 'bolt' },
-        { id: 'other-builder', label: 'Other App Builder', value: 'other-builder' },
-      ],
-    },
-    {
-      slug: 'tools-future',
-      prompt: 'Which AI coding tool would you like to use in the future?',
-      description: 'Select all that apply',
-      type: 'multiple' as const,
       categorySlug: 'languages-tools',
       order: 4,
       options: [
@@ -294,31 +256,77 @@ async function resetSurvey() {
         { id: 'kiro', label: 'Kiro (IDE)', value: 'kiro' },
         { id: 'antigravity', label: 'Antigravity (IDE)', value: 'antigravity' },
         { id: 'zed', label: 'Zed (IDE)', value: 'zed' },
-        { id: 'other-ide', label: 'Other IDE', value: 'other-ide' },
         // Autonomous Agents
         { id: 'claude-code', label: 'Claude Code (Agent)', value: 'claude-code' },
         { id: 'codex', label: 'Codex (Agent)', value: 'codex' },
         { id: 'devin', label: 'Devin (Agent)', value: 'devin' },
         { id: 'jules', label: 'Jules (Agent)', value: 'jules' },
         { id: 'openhands', label: 'OpenHands (Agent)', value: 'openhands' },
-        { id: 'other-agent', label: 'Other Agent', value: 'other-agent' },
         // VS Code Extensions
         { id: 'github-copilot', label: 'GitHub Copilot (Extension)', value: 'github-copilot' },
         { id: 'cline', label: 'Cline (Extension)', value: 'cline' },
         { id: 'augment-code', label: 'Augment Code (Extension)', value: 'augment-code' },
         { id: 'amazon-q', label: 'Amazon Q Developer (Extension)', value: 'amazon-q' },
-        { id: 'other-extension', label: 'Other Extension', value: 'other-extension' },
         // Code Review
         { id: 'coderabbit', label: 'CodeRabbit (Code Review)', value: 'coderabbit' },
         { id: 'greptile', label: 'Greptile (Code Review)', value: 'greptile' },
         { id: 'qodo', label: 'Qodo (Code Review)', value: 'qodo' },
-        { id: 'other-review', label: 'Other Code Review', value: 'other-review' },
         // App Builders
         { id: 'replit', label: 'Replit (App Builder)', value: 'replit' },
         { id: 'lovable', label: 'Lovable (App Builder)', value: 'lovable' },
-        { id: 'bolt', label: 'Bolt.new (App Builder)', value: 'bolt' },
-        { id: 'other-builder', label: 'Other App Builder', value: 'other-builder' },
       ],
+    },
+    {
+      slug: 'other-tools-recommend',
+      prompt: 'Other tools you would recommend?',
+      description: 'List any other AI coding tools you would recommend not mentioned above',
+      type: 'text' as const,
+      categorySlug: 'languages-tools',
+      order: 5,
+    },
+    {
+      slug: 'tools-future',
+      prompt: 'Which AI coding tool would you like to use in the future?',
+      description: 'Select all that apply, or specify in "Other tools" below',
+      type: 'multiple' as const,
+      categorySlug: 'languages-tools',
+      order: 6,
+      options: [
+        // None option
+        { id: 'none-happy', label: 'None. I\'m happy with the tools I use.', value: 'none-happy' },
+        // IDE
+        { id: 'cursor', label: 'Cursor (IDE)', value: 'cursor' },
+        { id: 'windsurf', label: 'Windsurf (IDE)', value: 'windsurf' },
+        { id: 'kiro', label: 'Kiro (IDE)', value: 'kiro' },
+        { id: 'antigravity', label: 'Antigravity (IDE)', value: 'antigravity' },
+        { id: 'zed', label: 'Zed (IDE)', value: 'zed' },
+        // Autonomous Agents
+        { id: 'claude-code', label: 'Claude Code (Agent)', value: 'claude-code' },
+        { id: 'codex', label: 'Codex (Agent)', value: 'codex' },
+        { id: 'devin', label: 'Devin (Agent)', value: 'devin' },
+        { id: 'jules', label: 'Jules (Agent)', value: 'jules' },
+        { id: 'openhands', label: 'OpenHands (Agent)', value: 'openhands' },
+        // VS Code Extensions
+        { id: 'github-copilot', label: 'GitHub Copilot (Extension)', value: 'github-copilot' },
+        { id: 'cline', label: 'Cline (Extension)', value: 'cline' },
+        { id: 'augment-code', label: 'Augment Code (Extension)', value: 'augment-code' },
+        { id: 'amazon-q', label: 'Amazon Q Developer (Extension)', value: 'amazon-q' },
+        // Code Review
+        { id: 'coderabbit', label: 'CodeRabbit (Code Review)', value: 'coderabbit' },
+        { id: 'greptile', label: 'Greptile (Code Review)', value: 'greptile' },
+        { id: 'qodo', label: 'Qodo (Code Review)', value: 'qodo' },
+        // App Builders
+        { id: 'replit', label: 'Replit (App Builder)', value: 'replit' },
+        { id: 'lovable', label: 'Lovable (App Builder)', value: 'lovable' },
+      ],
+    },
+    {
+      slug: 'other-tools-future',
+      prompt: 'Other tools you want to use in the future?',
+      description: 'List any other AI coding tools you want to try not mentioned above',
+      type: 'text' as const,
+      categorySlug: 'languages-tools',
+      order: 7,
     },
     {
       slug: 'capabilities-improvement',
@@ -326,7 +334,7 @@ async function resetSurvey() {
       description: 'Select all that apply',
       type: 'multiple' as const,
       categorySlug: 'languages-tools',
-      order: 5,
+      order: 8,
       options: [
         { id: 'large-codebases', label: 'Better understanding of large codebases', value: 'large-codebases' },
         { id: 'reasoning', label: 'Reasoning', value: 'reasoning' },
@@ -348,7 +356,7 @@ async function resetSurvey() {
       description: 'Select all that apply',
       type: 'multiple' as const,
       categorySlug: 'languages-tools',
-      order: 6,
+      order: 9,
       options: [
         { id: 'opus-4-5', label: 'Opus 4.5', value: 'opus-4-5' },
         { id: 'sonnet-4-5', label: 'Sonnet 4.5', value: 'sonnet-4-5' },
@@ -369,7 +377,7 @@ async function resetSurvey() {
       description: 'Select one',
       type: 'single' as const,
       categorySlug: 'languages-tools',
-      order: 7,
+      order: 10,
       options: [
         { id: 'opus-4-5', label: 'Opus 4.5', value: 'opus-4-5' },
         { id: 'sonnet-4-5', label: 'Sonnet 4.5', value: 'sonnet-4-5' },
@@ -390,7 +398,7 @@ async function resetSurvey() {
       description: 'Select all that apply',
       type: 'multiple' as const,
       categorySlug: 'languages-tools',
-      order: 8,
+      order: 11,
       options: [
         { id: 'opus-4-5', label: 'Opus 4.5', value: 'opus-4-5' },
         { id: 'sonnet-4-5', label: 'Sonnet 4.5', value: 'sonnet-4-5' },
@@ -411,7 +419,7 @@ async function resetSurvey() {
       prompt: 'Do you currently use any MCP servers?',
       type: 'single' as const,
       categorySlug: 'languages-tools',
-      order: 9,
+      order: 12,
       options: [
         { id: 'yes-several', label: 'Yes — I actively use several', value: 'yes-several' },
         { id: 'yes-one', label: 'Yes — I use one', value: 'yes-one' },
@@ -425,7 +433,7 @@ async function resetSurvey() {
       prompt: 'How many MCP servers do you use regularly?',
       type: 'single' as const,
       categorySlug: 'languages-tools',
-      order: 10,
+      order: 13,
       options: [
         { id: '1', label: '1', value: '1' },
         { id: '2-3', label: '2–3', value: '2-3' },
@@ -439,7 +447,7 @@ async function resetSurvey() {
       prompt: 'Have you selected a coding agent for its support of MCP?',
       type: 'single' as const,
       categorySlug: 'languages-tools',
-      order: 11,
+      order: 14,
       options: [
         { id: 'yes-major', label: 'Yes — MCP support was a major deciding factor', value: 'yes-major' },
         { id: 'yes-somewhat', label: 'Yes — MCP support influenced my decision somewhat', value: 'yes-somewhat' },
@@ -454,14 +462,14 @@ async function resetSurvey() {
       description: 'Open-ended response',
       type: 'text' as const,
       categorySlug: 'languages-tools',
-      order: 12,
+      order: 15,
     },
     {
       slug: 'mcp-importance',
       prompt: 'How important is MCP support for your future tooling decisions?',
       type: 'single' as const,
       categorySlug: 'languages-tools',
-      order: 13,
+      order: 16,
       options: [
         { id: 'extremely', label: 'Extremely important — a must-have', value: 'extremely' },
         { id: 'important', label: 'Important — strong preference', value: 'important' },
@@ -715,11 +723,11 @@ async function resetSurvey() {
   console.log('✅ Reset complete!\n');
   console.log('Survey structure:');
   console.log('  1. About You: 7 questions');
-  console.log('  2. Languages & Tools: 13 questions (tools + models + MCP)');
+  console.log('  2. Languages & Tools: 16 questions (tools + 3 other tools + models + MCP)');
   console.log('  3. Vibe Engineering: 12 questions');
   console.log('  4. Final Thoughts: 1 question');
   console.log('  ─────────────────────');
-  console.log('  Total: 33 questions');
+  console.log('  Total: 36 questions');
 }
 
 resetSurvey()

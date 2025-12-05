@@ -179,6 +179,7 @@ export interface QuestionOption {
   id: string;
   label: string;
   value: string;
+  allowCustomText?: boolean; // When true, shows a text input when this option is selected
 }
 
 export interface SkipCondition {

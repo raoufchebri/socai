@@ -5,7 +5,7 @@ Welcome to **State of Code 2025**.
 Do you use AI coding tools? Your responses will help us understand how developers use coding agents and their impact on productivity.
 
 ℹ **Estimated time:** 5–10 minutes
-ℹ **33 questions across 4 categories**
+ℹ **36 questions across 4 categories**
 
 ---
 
@@ -119,7 +119,6 @@ The objective is to understand the demography: age, experience, location, and ba
 * Kiro
 * Antigravity
 * Zed
-* Other
 
 #### **Autonomous Agents**
 
@@ -128,7 +127,6 @@ The objective is to understand the demography: age, experience, location, and ba
 * Devin
 * Jules
 * OpenHands
-* Other
 
 #### **VS Code Extensions**
 
@@ -136,29 +134,103 @@ The objective is to understand the demography: age, experience, location, and ba
 * Cline
 * Augment Code
 * Amazon Q Developer
-* Other
 
 #### **Code Review Tools**
 
 * CodeRabbit
 * Greptile
 * Qodo
-* Other
 
 #### **App Builders**
 
 * Replit
 * Lovable
-* Bolt.new
-* Other
+
+#### **Other Tools**
+
+*(Open-ended response)*
 
 ### **10. Which AI coding tool are you most likely to recommend?**
 
-*(Same categories as above)*
+#### **IDE**
+
+* Cursor
+* Windsurf
+* Kiro
+* Antigravity
+* Zed
+
+#### **Autonomous Agents**
+
+* Claude Code
+* Codex
+* Devin
+* Jules
+* OpenHands
+
+#### **VS Code Extensions**
+
+* GitHub Copilot
+* Cline
+* Augment Code
+* Amazon Q Developer
+
+#### **Code Review Tools**
+
+* CodeRabbit
+* Greptile
+* Qodo
+
+#### **App Builders**
+
+* Replit
+* Lovable
+
+#### **Other Tools**
+
+*(Open-ended response)*
 
 ### **11. Which AI coding tool would you like to use in the future?**
 
-*(Same categories as above)*
+* None. I'm happy with the tools I use.
+
+#### **IDE**
+
+* Cursor
+* Windsurf
+* Kiro
+* Antigravity
+* Zed
+
+#### **Autonomous Agents**
+
+* Claude Code
+* Codex
+* Devin
+* Jules
+* OpenHands
+
+#### **VS Code Extensions**
+
+* GitHub Copilot
+* Cline
+* Augment Code
+* Amazon Q Developer
+
+#### **Code Review Tools**
+
+* CodeRabbit
+* Greptile
+* Qodo
+
+#### **App Builders**
+
+* Replit
+* Lovable
+
+#### **Other Tools**
+
+*(Open-ended response)*
 
 ### **12. Which capabilities would you most like to see improved in AI coding agents?**
 

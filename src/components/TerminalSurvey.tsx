@@ -86,8 +86,9 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
   const questionsInCurrentCategory = currentCategory?.questions || [];
   const currentQuestion = questionsInCurrentCategory[currentQuestionIndexInCategory];
 
-  // Check if current category is AI Coding Tools (uses matrix view)
-  const isAIToolsCategory = currentCategory?.slug === 'ai-tools';
+  // Matrix view disabled - using standard question rendering for all categories
+  // The old ai-tools category with matrix view has been replaced with languages-tools
+  const isAIToolsCategory = false; // Disabled: currentCategory?.slug === 'ai-tools';
 
   // Group AI tools questions by prefix for matrix view
   const aiToolsGroups = useMemo(() => {
@@ -483,9 +484,10 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- Intentionally minimal deps for keyboard handler stability
   }, [phase, currentQuestion, selectedIndex, selectedMultiple]);
 
-  // Helper to check if an option is an "other" option
-  const isOtherOption = (value: string) => {
-    return value === 'other' || value.startsWith('other-');
+  // Helper to check if an option allows custom text input
+  const isOtherOption = (option: { value: string; allowCustomText?: boolean }) => {
+    // Check explicit allowCustomText flag first, then fall back to value-based convention
+    return option.allowCustomText === true || option.value === 'other' || option.value.startsWith('other-');
   };
 
   const submitAnswer = () => {
@@ -495,13 +497,13 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
 
     if (currentQuestion.type === 'single') {
       const options = currentQuestion.options || [];
-      if (!options[selectedIndex]) return;
-      const selectedValue = options[selectedIndex].value;
+      const selectedOption = options[selectedIndex];
+      if (!selectedOption) return;
       // If "other" is selected and there's text, include it
-      if (isOtherOption(selectedValue) && otherText.trim()) {
+      if (isOtherOption(selectedOption) && otherText.trim()) {
         answer = `other:${otherText.trim()}`;
       } else {
-        answer = selectedValue;
+        answer = selectedOption.value;
       }
     } else if (currentQuestion.type === 'multiple') {
       if (selectedMultiple.size === 0) {
@@ -509,8 +511,10 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
         return;
       }
       // Replace "other" with "other:text" if there's text
+      const options = currentQuestion.options || [];
       const answers = Array.from(selectedMultiple).map(val => {
-        if (isOtherOption(val) && otherText.trim()) {
+        const option = options.find(o => o.value === val);
+        if (option && isOtherOption(option) && otherText.trim()) {
           return `other:${otherText.trim()}`;
         }
         return val;
@@ -761,20 +765,22 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
         {/* Options based on type */}
         {question.type === 'text' ? (
           <div className="mt-4">
-            <input
-              type="text"
+            <textarea
               value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') {
+                // Submit on Cmd/Ctrl + Enter
+                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
                   e.preventDefault();
                   submitAnswer();
                 }
               }}
-              className="w-full bg-[#21262d] border border-[#30363d] rounded px-4 py-3 text-gray-200 font-mono focus:outline-none focus:border-[#CD8B6A]"
+              className="w-full bg-[#21262d] border border-[#30363d] rounded px-4 py-3 text-gray-200 font-mono focus:outline-none focus:border-[#CD8B6A] min-h-[100px] resize-y"
               placeholder="Type your answer..."
-              autoFocus
             />
+            <div className="text-gray-500 text-xs mt-2">
+              Press <kbd className="px-1 py-0.5 bg-gray-700 rounded">⌘</kbd>+<kbd className="px-1 py-0.5 bg-gray-700 rounded">Enter</kbd> to submit
+            </div>
           </div>
         ) : question.type === 'scale' ? (
           <div className="mt-4 space-y-1">
@@ -815,7 +821,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
                 ? selectedMultiple.has(option.value)
                 : isHighlighted;
               const shortcutKey = getShortcutKey(idx);
-              const isOther = isOtherOption(option.value);
+              const isOther = isOtherOption(option);
 
               return (
                 <div key={option.id}>
@@ -1022,77 +1028,24 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
                     );
                   })}
                 </div>
-
-                {/* Other input */}
-                {group.otherQuestion && (
-                  <div className="mt-4 flex items-center gap-2 text-gray-500">
-                    <span className="w-4"></span>
-                    <span>Other:</span>
-                    <input
-                      type="text"
-                      value={otherInputs[group.otherQuestion.slug] || ''}
-                      onChange={(e) => handleOtherInput(group.otherQuestion!.slug, e.target.value)}
-                      onBlur={() => handleOtherBlur(group.otherQuestion!.slug)}
-                      onFocus={() => {
-                        setMatrixGroupIndex(groupIdx);
-                        setIsInOtherInput(true);
-                      }}
-                      className="flex-1 max-w-xs bg-transparent border-b border-gray-700 text-gray-200 font-mono text-sm focus:outline-none focus:border-[#CD8B6A] py-1"
-                      placeholder="________________"
-                    />
-                  </div>
-                )}
-
-                {/* Satisfaction for this group */}
-                {group.satisfactionQuestion && (
-                  <div className="mt-6 pt-4 border-t border-gray-700/50">
-                    <div className="text-gray-300 mb-2 flex items-center">
-                      <span className="w-4"></span>
-                      <span>{group.satisfactionQuestion.prompt}</span>
-                    </div>
-                    <div className="flex items-center gap-4 ml-4">
-                      {Array.from({ length: (group.satisfactionQuestion.scaleMax ?? 5) - (group.satisfactionQuestion.scaleMin ?? 1) + 1 }).map((_, scaleIdx) => {
-                        const value = (group.satisfactionQuestion!.scaleMin ?? 1) + scaleIdx;
-                        const currentValue = matrixAnswers[group.satisfactionQuestion!.slug] || getAnswer(group.satisfactionQuestion!.slug);
-                        const isSelected = currentValue === value || currentValue === value.toString();
-                        return (
-                          <span
-                            key={scaleIdx}
-                            className={`cursor-pointer ${isSelected ? 'text-[#CD8B6A]' : 'text-gray-600'}`}
-                            onClick={() => handleMatrixAnswer(group.satisfactionQuestion!.slug, value.toString())}
-                          >
-                            {isSelected ? `(${value})` : ` ${value} `}
-                          </span>
-                        );
-                      })}
-                      <span className="text-gray-600 text-xs">
-                        {group.satisfactionQuestion.scaleMinLabel} → {group.satisfactionQuestion.scaleMaxLabel}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Pain points for this group */}
-                {group.painPointsQuestion && (
-                  <div className="mt-4">
-                    <div className="text-gray-300 mb-2 flex items-center">
-                      <span className="w-4"></span>
-                      <span>{group.painPointsQuestion.prompt}</span>
-                    </div>
-                    <div className="ml-4">
-                      <textarea
-                        value={otherInputs[group.painPointsQuestion.slug] || ''}
-                        onChange={(e) => handleOtherInput(group.painPointsQuestion!.slug, e.target.value)}
-                        onBlur={() => handleOtherBlur(group.painPointsQuestion!.slug)}
-                        className="w-full max-w-lg bg-[#21262d] border border-[#30363d] px-3 py-2 text-gray-200 font-mono text-sm focus:outline-none focus:border-[#CD8B6A] min-h-[60px]"
-                        placeholder="Type here..."
-                      />
-                    </div>
-                  </div>
-                )}
               </div>
             );
           })}
+
+          {/* Single "Other tools" text area at the bottom */}
+          <div className="mt-8 pt-6 border-t border-gray-700">
+            <div className="text-gray-300 mb-3">
+              <span className="text-[#CD8B6A]">?</span> Are there any other AI coding tools you use that weren&apos;t listed above?
+            </div>
+            <textarea
+              value={otherInputs['ai-tools-other'] || ''}
+              onChange={(e) => handleOtherInput('ai-tools-other', e.target.value)}
+              onBlur={() => handleOtherBlur('ai-tools-other')}
+              onFocus={() => setIsInOtherInput(true)}
+              className="w-full max-w-xl bg-[#21262d] border border-[#30363d] rounded px-3 py-2 text-gray-200 font-mono text-sm focus:outline-none focus:border-[#CD8B6A] min-h-[80px]"
+              placeholder="E.g., Aider, Continue, Tabnine, etc."
+            />
+          </div>
 
         </div>
 
