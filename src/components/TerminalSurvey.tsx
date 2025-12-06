@@ -17,6 +17,7 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
     error,
     isSubmitting,
     isCompleted,
+    isSyncing,
     currentQuestions,
     totalQuestions,
     answeredCount,
@@ -1224,8 +1225,13 @@ export default function TerminalSurvey({ year }: TerminalSurveyProps) {
         </div>
         <div className="terminal-status">
           {phase === 'questions' && (
-            <span className="text-[#CD8B6A] text-xs font-mono">
+            <span className="text-[#CD8B6A] text-xs font-mono flex items-center gap-2">
               {progressPercentage}%
+              {isSyncing && (
+                <span className="text-gray-500 animate-pulse" title="Saving...">
+                  ↑
+                </span>
+              )}
             </span>
           )}
           {phase === 'recap' && isSubmitting && (
