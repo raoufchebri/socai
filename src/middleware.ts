@@ -14,6 +14,21 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Protect admin routes with cookie-based auth
+  if (pathname.startsWith('/admin')) {
+    // Allow the login page
+    if (pathname === '/admin/login') {
+      return NextResponse.next();
+    }
+    
+    // Check for admin auth cookie
+    const adminAuth = request.cookies.get('admin_auth');
+    if (adminAuth?.value !== 'authenticated') {
+      return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+    return NextResponse.next();
+  }
+
   // Allow static files and Next.js internals
   if (
     pathname.startsWith('/_next') ||
