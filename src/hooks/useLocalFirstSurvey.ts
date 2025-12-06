@@ -5,6 +5,7 @@ import type { SurveyData, Question, Answer } from '@/lib/survey-types';
 
 const LOCAL_ANSWERS_KEY = 'stateofcode_local_answers';
 const SESSION_TOKEN_KEY = 'stateofcode_session_token';
+const SYNC_DEBOUNCE_MS = 1000; // Sync to server after 1 second of inactivity
 
 interface UseLocalFirstSurveyOptions {
   year: number;
@@ -22,6 +23,8 @@ interface UseLocalFirstSurveyReturn {
   isSubmitting: boolean;
   hasUnsavedChanges: boolean;
   isCompleted: boolean;
+  isSyncing: boolean;
+  lastSyncError: string | null;
   
   // Computed
   currentQuestions: Question[];
@@ -48,8 +51,12 @@ export function useLocalFirstSurvey({ year }: UseLocalFirstSurveyOptions): UseLo
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [serverAnswers, setServerAnswers] = useState<Record<string, Answer>>({});
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSyncError, setLastSyncError] = useState<string | null>(null);
   
   const initialLoadComplete = useRef(false);
+  const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pendingAnswersRef = useRef<Record<string, Answer>>({});
 
   // Calculate if there are unsaved changes
   const hasUnsavedChanges = Object.keys(answers).some(
@@ -77,6 +84,77 @@ export function useLocalFirstSurvey({ year }: UseLocalFirstSurveyOptions): UseLo
       console.error('Failed to save local answers:', e);
     }
   }, []);
+
+  // Background sync to server (debounced)
+  const syncToServer = useCallback(async () => {
+    if (!sessionToken || isCompleted) return;
+    
+    const answersToSync = { ...pendingAnswersRef.current };
+    if (Object.keys(answersToSync).length === 0) return;
+    
+    // Clear pending before sync (new changes during sync will be re-queued)
+    pendingAnswersRef.current = {};
+    
+    setIsSyncing(true);
+    setLastSyncError(null);
+    
+    try {
+      const res = await fetch('/api/responses/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: sessionToken,
+          answers: answersToSync,
+        }),
+      });
+
+      if (!res.ok) {
+        // Re-queue failed answers for next sync attempt
+        pendingAnswersRef.current = { ...answersToSync, ...pendingAnswersRef.current };
+        const data = await res.json();
+        throw new Error(data.error || 'Sync failed');
+      }
+
+      // Update server answers state to track what's been synced
+      setServerAnswers(prev => ({ ...prev, ...answersToSync }));
+      console.log(`[Sync] Successfully synced ${Object.keys(answersToSync).length} answer(s)`);
+    } catch (err) {
+      console.error('[Sync] Background sync failed:', err);
+      setLastSyncError(err instanceof Error ? err.message : 'Sync failed');
+      // Answers remain in pendingAnswersRef for retry
+    } finally {
+      setIsSyncing(false);
+    }
+  }, [sessionToken, isCompleted]);
+
+  // Schedule a debounced sync
+  const scheduleDebouncedSync = useCallback(() => {
+    // Clear any existing timeout
+    if (syncTimeoutRef.current) {
+      clearTimeout(syncTimeoutRef.current);
+    }
+    
+    // Schedule new sync
+    syncTimeoutRef.current = setTimeout(() => {
+      syncToServer();
+    }, SYNC_DEBOUNCE_MS);
+  }, [syncToServer]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (syncTimeoutRef.current) {
+        clearTimeout(syncTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Sync any pending answers when session token becomes available
+  useEffect(() => {
+    if (sessionToken && Object.keys(pendingAnswersRef.current).length > 0) {
+      scheduleDebouncedSync();
+    }
+  }, [sessionToken, scheduleDebouncedSync]);
 
   // Load survey data and session on mount
   useEffect(() => {
@@ -213,14 +291,20 @@ export function useLocalFirstSurvey({ year }: UseLocalFirstSurveyOptions): UseLo
     ? Math.round((answeredCount / totalQuestions) * 100) 
     : 0;
 
-  // Save an answer locally (instant, no network)
+  // Save an answer locally (instant) and queue for background sync
   const saveAnswer = useCallback((questionSlug: string, answer: Answer) => {
     setAnswers(prev => {
       const updated = { ...prev, [questionSlug]: answer };
       saveLocalAnswers(year, updated);
       return updated;
     });
-  }, [year, saveLocalAnswers]);
+    
+    // Queue for background sync
+    pendingAnswersRef.current[questionSlug] = answer;
+    
+    // Schedule debounced sync to server
+    scheduleDebouncedSync();
+  }, [year, saveLocalAnswers, scheduleDebouncedSync]);
 
   // Submit all answers to the server at once
   const submitAllAnswers = useCallback(async () => {
@@ -229,17 +313,27 @@ export function useLocalFirstSurvey({ year }: UseLocalFirstSurveyOptions): UseLo
       return;
     }
 
+    // Cancel any pending debounced sync
+    if (syncTimeoutRef.current) {
+      clearTimeout(syncTimeoutRef.current);
+      syncTimeoutRef.current = null;
+    }
+
     setIsSubmitting(true);
     setError(null);
 
     try {
+      // Merge any pending answers with current answers for final submission
+      const allAnswers = { ...answers, ...pendingAnswersRef.current };
+      pendingAnswersRef.current = {}; // Clear pending
+      
       // Submit all answers in a batch
       const res = await fetch('/api/responses/batch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           token: sessionToken,
-          answers,
+          answers: allAnswers,
         }),
       });
 
@@ -261,7 +355,7 @@ export function useLocalFirstSurvey({ year }: UseLocalFirstSurveyOptions): UseLo
       }
 
       // Update server answers to match local
-      setServerAnswers({ ...answers });
+      setServerAnswers({ ...allAnswers });
       setIsCompleted(true);
       
       // Clear local storage after successful submission
@@ -308,6 +402,8 @@ export function useLocalFirstSurvey({ year }: UseLocalFirstSurveyOptions): UseLo
     isSubmitting,
     hasUnsavedChanges,
     isCompleted,
+    isSyncing,
+    lastSyncError,
     currentQuestions,
     totalQuestions,
     answeredCount,
