@@ -4,8 +4,8 @@ Welcome to **State of Code 2025**.
 
 Do you use AI coding tools? Your responses will help us understand how developers use coding agents and their impact on productivity.
 
-ℹ **Estimated time:** 5–10 minutes
-ℹ **36 questions across 4 categories**
+ℹ **Estimated time:** 4–5 minutes
+ℹ **18 questions across 4 categories**
 
 ---
 
