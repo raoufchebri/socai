@@ -71,6 +71,8 @@ export const questions = pgTable('questions', {
   scaleMax: integer('scale_max'),
   scaleMinLabel: varchar('scale_min_label', { length: 100 }),
   scaleMaxLabel: varchar('scale_max_label', { length: 100 }),
+  // For versioning - inactive questions are hidden from survey but responses preserved
+  active: boolean('active').notNull().default(true),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

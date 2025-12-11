@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { surveys, surveyQuestions, questions, categories } from '@/db/schema';
-import { eq, asc } from 'drizzle-orm';
+import { eq, asc, and } from 'drizzle-orm';
 
 export async function GET(
   request: NextRequest,
@@ -30,7 +30,7 @@ export async function GET(
       );
     }
 
-    // Get all questions for this survey with their categories
+    // Get all active questions for this survey with their categories
     const surveyQuestionsData = await db
       .select({
         question: questions,
@@ -40,7 +40,10 @@ export async function GET(
       .from(surveyQuestions)
       .innerJoin(questions, eq(surveyQuestions.questionId, questions.id))
       .innerJoin(categories, eq(questions.categoryId, categories.id))
-      .where(eq(surveyQuestions.surveyId, survey.id))
+      .where(and(
+        eq(surveyQuestions.surveyId, survey.id),
+        eq(questions.active, true)
+      ))
       .orderBy(asc(categories.order), asc(questions.order));
 
     // Group questions by category
