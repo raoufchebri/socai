@@ -9,8 +9,18 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Allow the actual survey page
-  if (pathname === '/2025/survey') {
+  // Allow the landing page
+  if (pathname === '/') {
+    return NextResponse.next();
+  }
+
+  // Allow the survey page and results page
+  if (pathname === '/2025/survey' || pathname === '/2025/survey/result') {
+    return NextResponse.next();
+  }
+
+  // Allow admin pages
+  if (pathname.startsWith('/admin')) {
     return NextResponse.next();
   }
 
