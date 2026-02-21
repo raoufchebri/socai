@@ -1,4 +1,8 @@
+import { redirect } from 'next/navigation';
 import TerminalSurvey from '@/components/TerminalSurvey';
+import { db } from '@/db';
+import { surveys } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
 interface SurveyPageProps {
   params: Promise<{
@@ -27,6 +31,15 @@ export default async function SurveyPage({ params }: SurveyPageProps) {
         </div>
       </div>
     );
+  }
+
+  // Check if survey is closed - redirect to results page
+  const survey = await db.query.surveys.findFirst({
+    where: eq(surveys.year, yearNum),
+  });
+
+  if (survey?.status === 'closed') {
+    redirect(`/${year}/survey/result`);
   }
 
   return (
